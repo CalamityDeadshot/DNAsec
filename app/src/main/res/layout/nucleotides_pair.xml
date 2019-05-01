@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/divider4"
+        android:layout_width="40dp"
+        android:layout_height="1dp"
+        android:background="@android:color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/top_nucleotide"
+        android:layout_width="16dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/cytosine_top_background"
+        android:paddingStart="1dp"
+        android:paddingEnd="1dp"
+        android:paddingBottom="8dp"
+        android:text="@string/cytosine"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/divider4"
+        app:layout_constraintStart_toStartOf="@+id/divider4"
+        app:layout_constraintTop_toBottomOf="@+id/divider4" />
+
+    <View
+        android:id="@+id/divider5"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="@android:color/black"
+        app:layout_constraintBottom_toTopOf="@+id/top_nucleotide"
+        app:layout_constraintEnd_toEndOf="@+id/top_nucleotide"
+        app:layout_constraintStart_toStartOf="@+id/top_nucleotide"
+        app:layout_constraintTop_toBottomOf="@+id/divider4" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginTop="26dp"
+        android:background="@drawable/concaver"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/top_nucleotide"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="@+id/top_nucleotide"
+        app:layout_constraintTop_toBottomOf="@+id/divider5" />
+
+    <TextView
+        android:id="@+id/bottom_nucleotide"
+        android:layout_width="16dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/guanine_bottom_background"
+        android:paddingStart="1dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="1dp"
+        android:paddingBottom="3dp"
+        android:text="@string/guanine"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/divider6"
+        app:layout_constraintStart_toStartOf="@+id/divider6"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
+
+    <View
+        android:id="@+id/divider6"
+        android:layout_width="40dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/black"
+        app:layout_constraintEnd_toEndOf="@+id/divider4"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/divider4"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_nucleotide" />
+
+    <View
+        android:id="@+id/divider8"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="@android:color/black"
+        app:layout_constraintBottom_toTopOf="@+id/divider6"
+        app:layout_constraintEnd_toEndOf="@+id/bottom_nucleotide"
+        app:layout_constraintStart_toStartOf="@+id/bottom_nucleotide"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_nucleotide" />
+
+    <View
+        android:id="@+id/triple_group_1"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="@drawable/dotted_divider_vertical"
+        android:elevation="-1px"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/bottom_nucleotide"
+        app:layout_constraintEnd_toEndOf="@+id/top_nucleotide"
+        app:layout_constraintStart_toStartOf="@+id/top_nucleotide"
+        app:layout_constraintTop_toTopOf="@+id/top_nucleotide"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/double_group_1"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/dotted_divider_vertical"
+        android:elevation="-1px"
+        app:layout_constraintBottom_toBottomOf="@+id/bottom_nucleotide"
+        app:layout_constraintEnd_toEndOf="@+id/top_nucleotide"
+        app:layout_constraintStart_toStartOf="@+id/top_nucleotide"
+        app:layout_constraintTop_toTopOf="@+id/top_nucleotide" />
+
+    <View
+        android:id="@+id/double_group_2"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/dotted_divider_vertical"
+        android:elevation="-1px"
+        app:layout_constraintBottom_toBottomOf="@+id/bottom_nucleotide"
+        app:layout_constraintEnd_toEndOf="@+id/top_nucleotide"
+        app:layout_constraintStart_toStartOf="@+id/top_nucleotide"
+        app:layout_constraintTop_toTopOf="@+id/top_nucleotide" />
+
+    <View
+        android:id="@+id/triple_group_2"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/dotted_divider_vertical"
+        android:elevation="-1px"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/bottom_nucleotide"
+        app:layout_constraintEnd_toEndOf="@+id/top_nucleotide"
+        app:layout_constraintStart_toStartOf="@+id/top_nucleotide"
+        app:layout_constraintTop_toTopOf="@+id/top_nucleotide"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/triple_group_3"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/dotted_divider_vertical"
+        android:elevation="-1px"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/bottom_nucleotide"
+        app:layout_constraintEnd_toEndOf="@+id/top_nucleotide"
+        app:layout_constraintStart_toStartOf="@+id/top_nucleotide"
+        app:layout_constraintTop_toTopOf="@+id/top_nucleotide"
+        tools:visibility="visible" />
+
+
+</android.support.constraint.ConstraintLayout>

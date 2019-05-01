@@ -1,4 +1,4 @@
-package com.example.dnasec;
+package com.app.dnasec;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

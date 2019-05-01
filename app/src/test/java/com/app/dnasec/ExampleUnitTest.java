@@ -1,4 +1,4 @@
-package com.example.dnasec;
+package com.app.dnasec;
 
 import org.junit.Test;
 
