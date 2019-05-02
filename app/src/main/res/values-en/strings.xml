@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DNAsec</string>
+    <string name="DNA">DNA</string>
+    <string name="DNA_acid_synthesis_explanation">After the tRNA molecules recognize the mRNA codons, the amino acids (AA) of the corresponding tRNA are attached to each other (with the formation of a peptide bond), forming a protein chain:</string>
+    <string name="DNA_transcription_explanation">By the <a href="https://en.wikipedia.org/wiki/Complementarity_(molecular_biology)">principle of complementarity</a>, mRNA is synthesized on the template DNA (transcription process):</string>
+    <string name="DNA_translation_explanation">The translation process occurs in the ribosome.
+        \nTransport RNA (tRNA) molecules, the anticodons of which are complementary to the mRNA codons in the ribosome, recognize the mRNA sequence:</string>
+    <string name="adenine">A</string>
+    <string name="aminoacid_chain">Amino acid chain</string>
+    <string name="aminoacid_shortened">AA</string>
+    <string name="cytosine">C</string>
+    <string name="genetic_code_table">The amino acid sequence is determined by the mRNA codons in the table of the genetic code:</string>
+    <string name="given">Initial data:</string>
+    <string name="guanine">G</string>
+    <string name="iRNA">mRNA</string>
+    <string name="iRNA_transcription_explanation">Using the <a href="https://en.wikipedia.org/wiki/Complementarity_(molecular_biology)">principle of complementarity</a>, it is possible to reconstruct the DNA fragment, which was a basis for mRNA synthesis.</string>
+    <string name="sequence">Sequence of</string>
+    <string name="start_sequence">Initial sequence:</string>
+    <string name="tRNA">tRNA</string>
+    <string name="tRNA_transcription_explanation">Using the principle of complementarity, it is possible to reconstruct the DNA fragment, which was a basis for mRNA synthesis.</string>
+    <string name="tRNA_translation_explanation">Using the <a href="https://en.wikipedia.org/wiki/Complementarity_(molecular_biology)">principle of complementarity</a>, it is possible to reconstruct the mRNA fragment recognized by the tRNA anticodons:</string>
+    <string name="thymine">T</string>
+    <string name="uracil">U</string>
+    <string name="result">Result:</string>
+    <string name="start_typing">Start typing sequence</string>
+    <string name="incomlete_sequence">Attention: incomplete sequence</string>
+    <string name="clear">Clear all</string>
+    <string name="erase">Erase</string>
+    <string name="explanation">Explanation</string>
+    <string name="isoleucine">Ile</string>
+    <string name="leucine">Leu</string>
+    <string name="methionine">Met</string>
+    <string name="phenylalanine">Phe</string>
+    <string name="proline">Pro</string>
+    <string name="serine">Ser</string>
+    <string name="threonine">Thr</string>
+    <string name="tyrosine">Tyr</string>
+    <string name="valine">Val</string>
+    <string name="alanine">Ala</string>
+    <string name="asparagine">Asn</string>
+    <string name="aspartic_acid">Asp</string>
+    <string name="glutamine">Glu</string>
+    <string name="histidine">His</string>
+    <string name="lysine">Lys</string>
+    <string name="stop">———</string>
+    <string name="glutamine_acid">Glu</string>
+    <string name="cysteine">Cys</string>
+    <string name="arginine">Arg</string>
+    <string name="glycine">Gly</string>
+    <string name="tryptophan">Trp</string>
+</resources>

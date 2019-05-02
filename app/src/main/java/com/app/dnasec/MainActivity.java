@@ -30,10 +30,70 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     boolean spinnerInteractionIsAllowed;
 
+    final int ID_DNA = 0;
+    final int ID_mRNA = 1;
+    final int ID_tRNA = 2;
+
+    String ADENINE;
+    String GUANINE;
+    String CYTOSINE;
+    String URACIL;
+    String THYMINE;
+
+    String phenylalanine;
+    String leucine;
+    String isoleucine;
+    String methionine;
+    String valine;
+    String serine;
+    String proline;
+    String threonine;
+    String tyrosine;
+    String alanine;
+    String stop;
+    String histidine;
+    String glutamine;
+    String asparagine;
+    String lysine;
+    String aspartic_acid;
+    String glutamine_acid;
+    String cysteine;
+    String tryptophan;
+    String arginine;
+    String glycine;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ADENINE = getResources().getString(R.string.adenine);
+        GUANINE = getResources().getString(R.string.guanine);
+        CYTOSINE = getResources().getString(R.string.cytosine);
+        URACIL = getResources().getString(R.string.uracil);
+        THYMINE = getResources().getString(R.string.thymine);
+
+        phenylalanine = getResources().getString(R.string.phenylalanine);
+        leucine = getResources().getString(R.string.leucine);
+        isoleucine = getResources().getString(R.string.isoleucine);
+        methionine = getResources().getString(R.string.methionine);
+        valine = getResources().getString(R.string.phenylalanine);
+        serine = getResources().getString(R.string.serine);
+        proline = getResources().getString(R.string.proline);
+        threonine = getResources().getString(R.string.threonine);
+        tyrosine = getResources().getString(R.string.tyrosine);
+        alanine = getResources().getString(R.string.alanine);
+        stop = getResources().getString(R.string.stop);
+        histidine = getResources().getString(R.string.histidine);
+        glutamine = getResources().getString(R.string.glutamine);
+        asparagine = getResources().getString(R.string.asparagine);
+        lysine = getResources().getString(R.string.lysine);
+        aspartic_acid = getResources().getString(R.string.aspartic_acid);
+        glutamine_acid = getResources().getString(R.string.glutamine_acid);
+        cysteine = getResources().getString(R.string.cysteine);
+        tryptophan = getResources().getString(R.string.tryptophan);
+        arginine = getResources().getString(R.string.arginine);
+        glycine = getResources().getString(R.string.glycine);
 
         spinnerInteractionIsAllowed = false;
 
@@ -107,20 +167,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.A:
-                sequence.setText(String.format("%sА", sequence.getText()));
+                sequence.append(getResources().getString(R.string.adenine));
 
                 break;
 
             case R.id.T:
-                sequence.setText(String.format("%s%s", sequence.getText(), ((Button) findViewById(R.id.T)).getText().toString()));
+                sequence.append(((Button) findViewById(R.id.T)).getText().toString());
                 break;
 
             case R.id.G:
-                sequence.setText(String.format("%sГ", sequence.getText()));
+                sequence.append(getResources().getString(R.string.guanine));
                 break;
 
             case R.id.C:
-                sequence.setText(String.format("%sЦ", sequence.getText()));
+                sequence.append(getResources().getString(R.string.cytosine));
                 break;
 
             case R.id.clear_button:
@@ -141,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     explanation.setEnabled(true);
 
                 } else if (sequence.getText().length() % 3 != 0){
-                    beforeEnteringText.setText("Внимание: неполная исходная цепь");
+                    beforeEnteringText.setText(getResources().getString(R.string.incomlete_sequence));
                     explanation.setEnabled(false);
                     color(firstResult);
                 }
@@ -151,8 +211,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     thirdResult.setText("");
                 }
 
-                switch (spinner.getSelectedItem().toString()) {
-                    case "ДНК":
+                switch ((int)spinner.getSelectedItemId()) {
+                    case ID_DNA:
                         if (sequence.getText().length() % 3 == 0 && sequence.getText().length() != 0) {
                             String[] solvedArr = solveForDNA();
 
@@ -171,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         break;
 
-                    case "иРНК":
+                    case ID_mRNA:
                         if (sequence.getText().length() % 3 == 0 && sequence.getText().length() != 0) {
                             String[] solvedArr = solveForIRNA();
                             firstResult.setText("-" + solvedArr[0] + "-");
@@ -189,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         break;
 
-                    case "тРНК":
+                    case ID_tRNA:
                         if (sequence.getText().length() % 3 == 0 && sequence.getText().length() != 0) {
                             String[] solvedArr = solveForTRNA();
                             firstResult.setText("-" + solvedArr[0] + "-");
@@ -232,8 +292,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             color(sequence);
             color(firstResult);
             beforeEnteringText.setText("");
-            switch (spinner.getSelectedItem().toString()) {
-                case "ДНК":
+            switch ((int)spinner.getSelectedItemId()) {
+                case ID_DNA:
                     if (sequence.getText().toString().length() % 3 == 0) {
                         color(sequence);
 
@@ -248,12 +308,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
                     } else {
-                        beforeEnteringText.setText("Внимание: неполная исходная цепь");
+                        beforeEnteringText.setText(getResources().getString(R.string.incomlete_sequence));
                         explanation.setEnabled(false);
                     }
                     break;
 
-                case "иРНК":
+                case ID_mRNA:
                     if (sequence.getText().toString().length() % 3 == 0) {
                         color(sequence);
 
@@ -265,11 +325,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         explanation.setEnabled(true);
 
                     } else {
-                        beforeEnteringText.setText("Внимание: неполная исходная цепь");
+                        beforeEnteringText.setText(getResources().getString(R.string.incomlete_sequence));
                         explanation.setEnabled(false);
                     }
                     break;
-                case "тРНК":
+                case ID_tRNA:
                     if (sequence.getText().length() % 3 == 0) {
                         color(sequence);
 
@@ -282,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         explanation.setEnabled(true);
 
                     } else {
-                        beforeEnteringText.setText("Внимание: неполная исходная цепь");
+                        beforeEnteringText.setText(getResources().getString(R.string.incomlete_sequence));
                         explanation.setEnabled(false);
                     }
             }
@@ -293,31 +353,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
 
-        switch (parent.getSelectedItem().toString()) {
-            case "ДНК":
-                firstResultHeading.setText("иРНК:");
-                secondResultHeading.setText("тРНК:");
-                thirdResultHeading.setText("АК-цепь:");
-                ((Button)findViewById(R.id.T)).setText("Т");
+        switch ((int)parent.getSelectedItemId()) {
+            case ID_DNA:
+                firstResultHeading.setText(getResources().getString(R.string.iRNA));
+                secondResultHeading.setText(getResources().getString(R.string.tRNA));
+                thirdResultHeading.setText(getResources().getString(R.string.aminoacid_chain));
+                ((Button)findViewById(R.id.T)).setText(getResources().getString(R.string.thymine));
                 if (spinnerInteractionIsAllowed) {
                     clearFields();
                 }
                 break;
 
-            case "иРНК":
-                firstResultHeading.setText("ДНК:");
-                secondResultHeading.setText("тРНК:");
-                thirdResultHeading.setText("АК-цепь:");
-                ((Button)findViewById(R.id.T)).setText("У");
+            case ID_mRNA:
+                firstResultHeading.setText(getResources().getString(R.string.DNA));
+                secondResultHeading.setText(getResources().getString(R.string.tRNA));
+                thirdResultHeading.setText(getResources().getString(R.string.aminoacid_chain));
+                ((Button)findViewById(R.id.T)).setText(getResources().getString(R.string.uracil));
                 if (spinnerInteractionIsAllowed) {
                     clearFields();
                 }
                 break;
-            case "тРНК":
-                firstResultHeading.setText("ДНК:");
-                secondResultHeading.setText("иРНК:");
-                thirdResultHeading.setText("АК-цепь:");
-                ((Button)findViewById(R.id.T)).setText("У");
+            case ID_tRNA:
+                firstResultHeading.setText(getResources().getString(R.string.DNA));
+                secondResultHeading.setText(getResources().getString(R.string.iRNA));
+                thirdResultHeading.setText(getResources().getString(R.string.aminoacid_chain));
+                ((Button)findViewById(R.id.T)).setText(getResources().getString(R.string.uracil));
                 if (spinnerInteractionIsAllowed) {
                     clearFields();
                 }
@@ -389,8 +449,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         handleIRNA(iter, codon, iRNAseqArr, codonToArr);
 
         for (int i = 0; i < codon.length(); i++) {
-            if (codonToArr[i].equals("Т")) {
-                tRNAseqArr[j + i] = "У";
+            if (codonToArr[i].equals(THYMINE)) {
+                tRNAseqArr[j + i] = URACIL;
             }
         }
         handleAminoAcid(iRNAseqArr, AAseqArr);
@@ -514,36 +574,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         int j = iter * 3;
         for (int i = 0; i < codon.length(); i++) {
-            switch (codonToArr[i]) {
-                case "У":
-                    DNAseqArr[j + i] = "Т";
-                    break;
-                case "А":
-                    DNAseqArr[j + i] = "А";
-                    break;
-                case "Ц":
-                    DNAseqArr[j + i] = "Ц";
-                    break;
-                case "Г":
-                    DNAseqArr[j + i] = "Г";
-                    break;
+            if (codonToArr[i].equals(URACIL)) {
+                DNAseqArr[j + i] = THYMINE;
+            } else if (codonToArr[i].equals(ADENINE)) {
+                DNAseqArr[j + i] = ADENINE;
+            } else if (codonToArr[i].equals(CYTOSINE)) {
+                DNAseqArr[j + i] = CYTOSINE;
+            } else if (codonToArr[i].equals(GUANINE)) {
+                DNAseqArr[j + i] = GUANINE;
             }
         }
 
         for (int i = 0; i < codon.length(); i++) {
-            switch (codonToArr[i]) {
-                case "А":
-                    iRNAseqArr[j + i] = "У";
-                    break;
-                case "У":
-                    iRNAseqArr[j + i] = "А";
-                    break;
-                case "Г":
-                    iRNAseqArr[j + i] = "Ц";
-                    break;
-                case "Ц":
-                    iRNAseqArr[j + i] = "Г";
-                    break;
+
+            if (codonToArr[i].equals(ADENINE)) {
+                iRNAseqArr[j + i] = URACIL;
+            } else if (codonToArr[i].equals(URACIL)) {
+                iRNAseqArr[j + i] = ADENINE;
+            } else if (codonToArr[i].equals(GUANINE)) {
+                iRNAseqArr[j + i] = CYTOSINE;
+            } else if (codonToArr[i].equals(CYTOSINE)) {
+                iRNAseqArr[j + i] = GUANINE;
             }
         }
 
@@ -553,19 +604,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     void handleDNA(int iter, String codon, String[] DNAseqArr, String[] codonToArr) {
         int j = iter * 3;
         for (int i = 0; i < codon.length(); i++) {
-            switch (codonToArr[i]) {
-                case "У":
-                    DNAseqArr[j + i] = "А";
-                    break;
-                case "А":
-                    DNAseqArr[j + i] = "Т";
-                    break;
-                case "Ц":
-                    DNAseqArr[j + i] = "Г";
-                    break;
-                case "Г":
-                    DNAseqArr[j + i] = "Ц";
-                    break;
+
+            if (codonToArr[i].equals(ADENINE)) {
+                DNAseqArr[j + i] = THYMINE;
+            } else if (codonToArr[i].equals(URACIL)) {
+                DNAseqArr[j + i] = ADENINE;
+            } else if (codonToArr[i].equals(GUANINE)) {
+                DNAseqArr[j + i] = CYTOSINE;
+            } else if (codonToArr[i].equals(CYTOSINE)) {
+                DNAseqArr[j + i] = GUANINE;
             }
         }
     }
@@ -573,39 +620,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     void handleIRNA(int iter, String codon, String[] iRNAseqArr, String[] codonToArr) {
         int j = iter * 3;
         for (int i = 0; i < codon.length(); i++) {
-            switch (codonToArr[i]) {
-                case "А":
-                    iRNAseqArr[j + i] = "У";
-                    break;
-                case "Т":
-                    iRNAseqArr[j + i] = "А";
-                    break;
-                case "Г":
-                    iRNAseqArr[j + i] = "Ц";
-                    break;
-                case "Ц":
-                    iRNAseqArr[j + i] = "Г";
-                    break;
+
+            if (codonToArr[i].equals(ADENINE)) {
+                iRNAseqArr[j + i] = URACIL;
+            } else if (codonToArr[i].equals(THYMINE)) {
+                iRNAseqArr[j + i] = ADENINE;
+            } else if (codonToArr[i].equals(GUANINE)) {
+                iRNAseqArr[j + i] = CYTOSINE;
+            } else if (codonToArr[i].equals(CYTOSINE)) {
+                iRNAseqArr[j + i] = GUANINE;
             }
+
         }
     }
 
     void handleTRNA(int iter, String codon, String[] tRNAseqArr, String[] codonToArr) {
         int j = iter * 3;
         for (int i = 0; i < codon.length(); i++) {
-            switch (codonToArr[i]) {
-                case "А":
-                    tRNAseqArr[j + i] = "У";
-                    break;
-                case "У":
-                    tRNAseqArr[j + i] = "А";
-                    break;
-                case "Г":
-                    tRNAseqArr[j + i] = "Ц";
-                    break;
-                case "Ц":
-                    tRNAseqArr[j + i] = "Г";
-                    break;
+
+            if (codonToArr[i].equals(ADENINE)) {
+                tRNAseqArr[j + i] = URACIL;
+            } else if (codonToArr[i].equals(URACIL)) {
+                tRNAseqArr[j + i] = ADENINE;
+            } else if (codonToArr[i].equals(GUANINE)) {
+                tRNAseqArr[j + i] = CYTOSINE;
+            } else if (codonToArr[i].equals(CYTOSINE)) {
+                tRNAseqArr[j + i] = GUANINE;
             }
         }
     }
@@ -615,113 +655,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int c = 0;
         for (int i = 0; i < iRNAseqArr.length - 2; i += 3, c++) {
 
-            switch ((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) {
-                case "УУУ":
-                case "УУЦ":
-                    AAseqArr[c] = "Фен";
-                    break;
-                case "УУА":
-                case "УУГ":
-                case "ЦУУ":
-                case "ЦУЦ":
-                case "ЦУА":
-                case "ЦУГ":
-                    AAseqArr[c] = "Лей";
-                    break;
-                case "УЦУ":
-                case "УЦЦ":
-                case "УЦА":
-                case "УЦГ":
-                case "АГУ":
-                case "АГЦ":
-                    AAseqArr[c] = "Сер";
-                    break;
-                case "УАУ":
-                case "УАЦ":
-                    AAseqArr[c] = "Тир";
-                    break;
-                case "УГУ":
-                case "УГЦ":
-                    AAseqArr[c] = "Цис";
-                    break;
-                case "УГГ":
-                    AAseqArr[c] = "Три";
-                    break;
-                case "ЦЦУ":
-                case "ЦЦЦ":
-                case "ЦЦА":
-                case "ЦЦГ":
-                    AAseqArr[c] = "Про";
-                    break;
-                case "ЦАУ":
-                case "ЦАЦ":
-                    AAseqArr[c] = "Гис";
-                    break;
-                case "ЦГУ":
-                case "ЦГЦ":
-                case "ЦГА":
-                case "ЦГГ":
-                case "АГА":
-                case "АГГ":
-                    AAseqArr[c] = "Арг";
-                    break;
-                case "АУУ":
-                case "АУЦ":
-                case "АУА":
-                    AAseqArr[c] = "Иле";
-                    break;
-                case "АЦУ":
-                case "АЦЦ":
-                case "АЦА":
-                case "АЦГ":
-                    AAseqArr[c] = "Тре";
-                    break;
-                case "ААУ":
-                case "ААЦ":
-                    AAseqArr[c] = "Асн";
-                    break;
-                case "АУГ":
-                    AAseqArr[c] = "Мет";
-                    break;
-                case "ААА":
-                case "ААГ":
-                    AAseqArr[c] = "Лиз";
-                    break;
-                case "ГУУ":
-                case "ГУЦ":
-                case "ГУА":
-                case "ГУГ":
-                    AAseqArr[c] = "Вал";
-                    break;
-                case "ГЦУ":
-                case "ГЦЦ":
-                case "ГЦА":
-                case "ГЦГ":
-                    AAseqArr[c] = "Ала";
-                    break;
-                case "ГАУ":
-                case "ГАЦ":
-                    AAseqArr[c] = "Асп";
-                    break;
-                case "ГАА":
-                case "ГАГ":
-                    AAseqArr[c] = "Глу";
-                    break;
-                case "ГГУ":
-                case "ГГЦ":
-                case "ГГА":
-                case "ГГГ":
-                    AAseqArr[c] = "Гли";
-                    break;
-                case "УАА":
-                case "УАГ":
-                case "УГА":
-                    AAseqArr[c] = "———";
-                    break;
-                case "ЦАА":
-                case "ЦАГ":
-                    AAseqArr[c] = "Глн";
-                    break;
+            if ((URACIL + URACIL + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + URACIL + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = phenylalanine;
+            } else if ((URACIL + URACIL + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + URACIL + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + URACIL + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + URACIL + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + URACIL + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + URACIL + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = leucine;
+            } else if ((URACIL + CYTOSINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + CYTOSINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + CYTOSINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + CYTOSINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + GUANINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + GUANINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = serine;
+            } else if ((URACIL + ADENINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + ADENINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = tyrosine;
+            } else if ((URACIL + GUANINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + GUANINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = cysteine;
+            } else if ((URACIL + GUANINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = tryptophan;
+            } else if ((CYTOSINE + CYTOSINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + CYTOSINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + CYTOSINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + CYTOSINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = proline;
+            } else if ((CYTOSINE + ADENINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + ADENINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = histidine;
+            } else if ((CYTOSINE + GUANINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + GUANINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + GUANINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + GUANINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + GUANINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + GUANINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = arginine;
+            } else if ((ADENINE + URACIL + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + URACIL + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + URACIL + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = isoleucine;
+            } else if ((ADENINE + CYTOSINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + CYTOSINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + CYTOSINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + CYTOSINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = threonine;
+            } else if ((ADENINE + ADENINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + ADENINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = asparagine;
+            } else if ((ADENINE + URACIL + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = methionine;
+            } else if ((ADENINE + ADENINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + ADENINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = lysine;
+            } else if ((GUANINE + URACIL + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + URACIL + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + URACIL + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + URACIL + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = valine;
+            } else if ((GUANINE + CYTOSINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + CYTOSINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + CYTOSINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + CYTOSINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = alanine;
+            } else if ((GUANINE + ADENINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + ADENINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = asparagine;
+            } else if ((GUANINE + ADENINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + ADENINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = glutamine_acid;
+            } else if ((GUANINE + GUANINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + GUANINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + GUANINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + GUANINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = glycine;
+            } else if ((URACIL + ADENINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + ADENINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + GUANINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = stop;
+            } else if ((CYTOSINE + ADENINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + ADENINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+                AAseqArr[c] = glutamine;
             }
         }
 
@@ -767,7 +742,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void clearFields() {
         sequence.setText("");
-        beforeEnteringText.setText("начните вводить цепь");
+        beforeEnteringText.setText(R.string.start_typing);
         firstResult.setText("");
         secondResult.setText("");
         thirdResult.setText("");

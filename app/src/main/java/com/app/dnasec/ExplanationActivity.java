@@ -84,19 +84,19 @@ public class ExplanationActivity extends AppCompatActivity {
     }
 
     private int getNucleotideType(String nucleotide) {
-        if (nucleotide.equals("А")) {
+        if (nucleotide.equals(getResources().getString(R.string.adenine))) {
             return ADENINE;
         }
-        if (nucleotide.equals("У")) {
+        if (nucleotide.equals(getResources().getString(R.string.uracil))) {
             return URACIL;
         }
-        if (nucleotide.equals("Г") ) {
+        if (nucleotide.equals(getResources().getString(R.string.guanine)) ) {
             return GUANINE;
         }
-        if (nucleotide.equals("Ц") ) {
+        if (nucleotide.equals(getResources().getString(R.string.cytosine)) ) {
             return CYTOSINE;
         }
-        if (nucleotide.equals("Т")) {
+        if (nucleotide.equals(getResources().getString(R.string.thymine))) {
             return THYMINE;
         }
 
@@ -174,7 +174,7 @@ public class ExplanationActivity extends AppCompatActivity {
 
             switch (sequenceType) {
                 case DNA_SEQUENCE:
-                    sequenceName.setText("ДНК");
+                    sequenceName.setText(getResources().getString(R.string.DNA));
                     linkedText.setText(R.string.DNA_transcription_explanation);
                     secondExpl.setText(R.string.DNA_translation_explanation);
                     thirdExpl.setText(R.string.DNA_acid_synthesis_explanation);
@@ -217,7 +217,7 @@ public class ExplanationActivity extends AppCompatActivity {
                     break;
 
                 case IRNA_SEQUENCE:
-                    sequenceName.setText("иРНК");
+                    sequenceName.setText(getResources().getString(R.string.iRNA));
                     linkedText.setText(R.string.iRNA_transcription_explanation);
                     secondExpl.setText(R.string.DNA_translation_explanation);
                     thirdExpl.setText(R.string.DNA_acid_synthesis_explanation);
@@ -264,7 +264,7 @@ public class ExplanationActivity extends AppCompatActivity {
 
 
                 case TRNA_SEQUENCE:
-                    sequenceName.setText("тРНК");
+                    sequenceName.setText(getResources().getString(R.string.tRNA));
                     linkedText.setText(R.string.tRNA_translation_explanation);
                     secondExpl.setText(R.string.tRNA_transcription_explanation);
                     ((TextView) findViewById(R.id.first_result_top)).setText(R.string.iRNA);

@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">DNAsec</string>
     <string name="given">Дано:</string>
+    <string name="result">Результат:</string>
+    <string name="start_typing">Начните вводить цепь</string>
+    <string name="incomlete_sequence">Внимание: неполная исходная цепь</string>
+    <string name="clear">Очистить всё</string>
+    <string name="erase">Стереть</string>
+    <string name="explanation">Как это получилось?</string>
     <string name="sequence">Последовательность</string>
     <string name="start_sequence">Исходная последовательность:</string>
     
@@ -9,23 +15,47 @@
     <string name="cytosine">Ц</string>
     <string name="thymine">Т</string>
     <string name="uracil">У</string>
+    
+    <!-- Аминокислоты -->
+    
+    <string name="phenylalanine">Фен</string>
+    <string name="leucine">Лей</string>
+    <string name="isoleucine">Иле</string>
+    <string name="methionine">Мет</string>
+    <string name="valine">Вал</string>
+    <string name="serine">Сер</string>
+    <string name="proline">Про</string>
+    <string name="threonine">Тре</string>
+    <string name="tyrosine">Тир</string>
+    <string name="alanine">Ала</string>
+    <string name="stop">———</string>
+    <string name="histidine">Гис</string>
+    <string name="glutamine">Глн</string>
+    <string name="asparagine">Асн</string>
+    <string name="lysine">Лиз</string>
+    <string name="aspartic_acid">Асп</string>
+    <string name="glutamine_acid">Глу</string>
+    <string name="cysteine">Цис</string>
+    <string name="tryptophan">Три</string>
+    <string name="arginine">Арг</string>
+    <string name="glycine">Гли</string>
+
+    <!-- /Аминокислоты -->
 
     <string name="DNA">ДНК</string>
     <string name="iRNA">иРНК</string>
     <string name="tRNA">тРНК</string>
     <string name="aminoacid_chain">Аминокислотная цепь</string>
     <string name="aminoacid_shortened">АК</string>
-    
-    <string name="proline_shortened">Про</string>
 
-    <string name="DNA_transcription_explanation">По <a href="https://ru.wikipedia.org/wiki/Комплементарность_(биология)">принципу комплиментарности</a> на матричной ДНК синтезируется иРНК (процесс транскрипции): </string>
+    <string name="DNA_transcription_explanation">"По <a href="https://ru.wikipedia.org/wiki/Комплементарность_(биология)">принципу комплементарности</a> на матричной ДНК синтезируется иРНК (процесс транскрипции): "</string>
     <string name="DNA_translation_explanation">В рибосоме происходит процесс трансляции.
         \nМолекулы транспортной РНК (тРНК), антикодоны которых комплиментарны находящимся в рибосоме кодонам иРНК, распознают последовательность иРНК:</string>
     <string name="DNA_acid_synthesis_explanation">После распознавания молекулами тРНК кодонов иРНК, аминокислоты (АК) соответствующих тРНК с образованием пептидной связи присоединяются друг к другу, образуя цепочку белка:</string>
     <string name="genetic_code_table">Последовательность аминокислот определяется по кодонам иРНК по таблице генетического кода:</string>
 
 
-    <string name="iRNA_transcription_explanation">Используя <a href="https://ru.wikipedia.org/wiki/Комплементарность_(биология)">принцип комплиментарности</a>, из фрагмента иРНК можно восстановить фрагмент ДНК, на котором была интезирована иРНК:</string>
+    <string name="iRNA_transcription_explanation">Используя <a href="https://ru.wikipedia.org/wiki/Комплементарность_(биология)">принцип комплиментарности</a>, из фрагмента иРНК можно восстановить фрагмент ДНК, на котором была синтезирована иРНК:</string>
 
     <string name="tRNA_translation_explanation">Используя <a href="https://ru.wikipedia.org/wiki/Комплементарность_(биология)">принцип комплиментарности</a>, из фрагмента тРНК можно восстановить фрагмент иРНК, с которым молекулы тРНК взаимодействовали во время трансляции:</string>
     <string name="tRNA_transcription_explanation">Используя принцип комплиментарности, из фрагмента иРНК можно восстановить фрагмент ДНК, на котором была синтезирована иРНК:</string>

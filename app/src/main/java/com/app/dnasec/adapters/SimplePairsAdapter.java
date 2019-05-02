@@ -66,6 +66,7 @@ public class SimplePairsAdapter extends RecyclerView.Adapter<SimplePairsAdapter.
 
         switch (model.getTopNucleotideName()) {
             case ADENINE:
+                System.out.println(mContext.getResources().getString(R.string.adenine));
                 holder.topNucleotide.setText(mContext.getResources().getString(R.string.adenine));
                 holder.topNucleotide.setBackgroundResource(R.drawable.adenine_top_background);
                 hideTriples();
