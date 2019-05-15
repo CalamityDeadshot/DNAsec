@@ -1,16 +1,20 @@
 package com.app.dnasec.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.dnasec.R;
 import com.app.dnasec.adapters.models.PairModel;
 import com.app.dnasec.views.NucleotidesPair;
+import com.tooltip.Tooltip;
 
 import java.util.List;
 
@@ -39,12 +43,11 @@ public class SimplePairsAdapter extends RecyclerView.Adapter<SimplePairsAdapter.
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.pair_item, parent, false);
 
-
         return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SimplePairsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final SimplePairsAdapter.ViewHolder holder, int position) {
 
         final PairModel model = items.get(position);
 
@@ -66,7 +69,6 @@ public class SimplePairsAdapter extends RecyclerView.Adapter<SimplePairsAdapter.
 
         switch (model.getTopNucleotideName()) {
             case ADENINE:
-                System.out.println(mContext.getResources().getString(R.string.adenine));
                 holder.topNucleotide.setText(mContext.getResources().getString(R.string.adenine));
                 holder.topNucleotide.setBackgroundResource(R.drawable.adenine_top_background);
                 hideTriples();
@@ -123,6 +125,8 @@ public class SimplePairsAdapter extends RecyclerView.Adapter<SimplePairsAdapter.
                 break;
         }
 
+        holder.bind(model.getTopNucleotideName());
+
     }
 
     @Override
@@ -131,7 +135,7 @@ public class SimplePairsAdapter extends RecyclerView.Adapter<SimplePairsAdapter.
     }
 
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         NucleotidesPair item;
         TextView topNucleotide;
         TextView bottomNucleotide;
@@ -144,6 +148,8 @@ public class SimplePairsAdapter extends RecyclerView.Adapter<SimplePairsAdapter.
         ViewHolder(View itemView) {
             super(itemView);
 
+            itemView.setOnClickListener(this);
+
             item = itemView.findViewById(R.id.item);
             topNucleotide = item.findViewById(R.id.top_nucleotide);
             bottomNucleotide = item.findViewById(R.id.bottom_nucleotide);
@@ -152,6 +158,16 @@ public class SimplePairsAdapter extends RecyclerView.Adapter<SimplePairsAdapter.
             triple_3 = item.findViewById(R.id.triple_group_3);
             double_1 = item.findViewById(R.id.double_group_1);
             double_2 = item.findViewById(R.id.double_group_2);
+        }
+
+        int type;
+        void bind(int type) {
+            this.type = type;
+        }
+
+        @Override
+        public void onClick(View v) {
+            showTooltip(v, type);
         }
     }
 
@@ -164,5 +180,37 @@ public class SimplePairsAdapter extends RecyclerView.Adapter<SimplePairsAdapter.
     private void hideDoubles() {
         mHolder.double_1.setVisibility(View.GONE);
         mHolder.double_2.setVisibility(View.GONE);
+    }
+
+    private void showTooltip(View v, int rootNucleotide) {
+        Tooltip.Builder tooltip = new Tooltip.Builder(v)
+                .setTextColor(Color.WHITE)
+                .setGravity(Gravity.BOTTOM)
+                .setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimary))
+                .setCancelable(true)
+                .setCornerRadius(15f);
+
+        switch (rootNucleotide) {
+            case ADENINE:
+                tooltip.setText(mContext.getResources().getString(R.string.adenine_uracil_complimentary)).show();
+                break;
+
+            case THYMINE:
+                tooltip.setText(mContext.getResources().getString(R.string.thymine_adenine_complimentary)).show();
+                break;
+
+            case GUANINE:
+                tooltip.setText(mContext.getResources().getString(R.string.guanine_cytosine_complimentary)).show();
+                break;
+
+            case CYTOSINE:
+                tooltip.setText(mContext.getResources().getString(R.string.cytosine_guanine_complimentary)).show();
+                break;
+
+            case URACIL:
+                tooltip.setText(mContext.getResources().getString(R.string.uracil_adenine_complimentary)).show();
+                break;
+        }
+
     }
 }

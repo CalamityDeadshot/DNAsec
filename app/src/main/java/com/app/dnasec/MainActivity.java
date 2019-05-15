@@ -1,18 +1,27 @@
 package com.app.dnasec;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -27,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView thirdResult;
     Spinner spinner;
     Button explanation;
+    CheckBox DnaIsMatrix;
 
     boolean spinnerInteractionIsAllowed;
 
@@ -62,10 +72,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String arginine;
     String glycine;
 
+    private SharedPreferences preferences;
+    private boolean codonsAreHighlighted;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        codonsAreHighlighted = preferences.getBoolean("KEY_HIGHLIGHT", true);
 
         ADENINE = getResources().getString(R.string.adenine);
         GUANINE = getResources().getString(R.string.guanine);
@@ -73,27 +90,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         URACIL = getResources().getString(R.string.uracil);
         THYMINE = getResources().getString(R.string.thymine);
 
-        phenylalanine = getResources().getString(R.string.phenylalanine);
-        leucine = getResources().getString(R.string.leucine);
-        isoleucine = getResources().getString(R.string.isoleucine);
-        methionine = getResources().getString(R.string.methionine);
-        valine = getResources().getString(R.string.phenylalanine);
-        serine = getResources().getString(R.string.serine);
-        proline = getResources().getString(R.string.proline);
-        threonine = getResources().getString(R.string.threonine);
-        tyrosine = getResources().getString(R.string.tyrosine);
-        alanine = getResources().getString(R.string.alanine);
-        stop = getResources().getString(R.string.stop);
-        histidine = getResources().getString(R.string.histidine);
-        glutamine = getResources().getString(R.string.glutamine);
-        asparagine = getResources().getString(R.string.asparagine);
-        lysine = getResources().getString(R.string.lysine);
-        aspartic_acid = getResources().getString(R.string.aspartic_acid);
-        glutamine_acid = getResources().getString(R.string.glutamine_acid);
-        cysteine = getResources().getString(R.string.cysteine);
-        tryptophan = getResources().getString(R.string.tryptophan);
-        arginine = getResources().getString(R.string.arginine);
-        glycine = getResources().getString(R.string.glycine);
+        phenylalanine = getResources().getString(R.string.phenylalanine_shortened);
+        leucine = getResources().getString(R.string.leucine_shortened);
+        isoleucine = getResources().getString(R.string.isoleucine_shortened);
+        methionine = getResources().getString(R.string.methionine_shortened);
+        valine = getResources().getString(R.string.phenylalanine_shortened);
+        serine = getResources().getString(R.string.serine_shortened);
+        proline = getResources().getString(R.string.proline_shortened);
+        threonine = getResources().getString(R.string.threonine_shortened);
+        tyrosine = getResources().getString(R.string.tyrosine_shortened);
+        alanine = getResources().getString(R.string.alanine_shortened);
+        stop = getResources().getString(R.string.stop_shortened);
+        histidine = getResources().getString(R.string.histidine_shortened);
+        glutamine = getResources().getString(R.string.glutamine_shortened);
+        asparagine = getResources().getString(R.string.asparagine_shortened);
+        lysine = getResources().getString(R.string.lysine_shortened);
+        aspartic_acid = getResources().getString(R.string.aspartic_acid_shortened);
+        glutamine_acid = getResources().getString(R.string.glutamine_acid_shortened);
+        cysteine = getResources().getString(R.string.cysteine_shortened);
+        tryptophan = getResources().getString(R.string.tryptophan_shortened);
+        arginine = getResources().getString(R.string.arginine_shortened);
+        glycine = getResources().getString(R.string.glycine_shortened);
 
         spinnerInteractionIsAllowed = false;
 
@@ -107,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         thirdResult = findViewById(R.id.resultText3);
         spinner = findViewById(R.id.spinner);
         explanation = findViewById(R.id.explanation);
+        DnaIsMatrix = findViewById(R.id.DNA_is_matrix);
 
         findViewById(R.id.A).setOnClickListener(this);
         findViewById(R.id.T).setOnClickListener(this);
@@ -127,6 +145,73 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         spinner.setOnItemSelectedListener(this);
 
+        DnaIsMatrix.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (sequence.getText().length() > 0) {
+                    if (sequence.getText().toString().length() % 3 == 0) {
+                        if (codonsAreHighlighted) {
+                            color(sequence);
+                        }
+
+                        String[] solvedArr;
+                        if (DnaIsMatrix.isChecked()) {
+                            solvedArr = solveForMatrixDNA();
+                        } else {
+                            solvedArr = solveForDNA();
+                        }
+
+                        firstResult.setText("-" + solvedArr[0] + "-");
+                        secondResult.setText(solvedArr[1]);
+                        thirdResult.setText(solvedArr[2]);
+
+                        if (codonsAreHighlighted) {
+                            color(firstResult);
+                        }
+
+                        explanation.setEnabled(true);
+
+
+                    } else {
+                        beforeEnteringText.setText(getResources().getString(R.string.incomlete_sequence));
+                        explanation.setEnabled(false);
+                    }
+                }
+            }
+        });
+
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.actionbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.settings:
+
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivityForResult(settingsIntent, 0);
+
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case 0:
+                recreate();
+                break;
+        }
     }
 
     @Override
@@ -139,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         savedInstanceState.putString("secondResult", secondResult.getText().toString());
         savedInstanceState.putString("thirdResultHeading", thirdResultHeading.getText().toString());
         savedInstanceState.putString("thirdResult", thirdResult.getText().toString());
+        savedInstanceState.putBoolean("DnaIsMatrix", DnaIsMatrix.isChecked());
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -153,14 +239,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         secondResult.setText(savedInstanceState.getString("secondResult"));
         thirdResultHeading.setText(savedInstanceState.getString("thirdResultHeading"));
         thirdResult.setText(savedInstanceState.getString("thirdResult"));
-        color(sequence);
-        color(firstResult);
-        if (spinner.getSelectedItem().toString().equals("тРНК")) {
-            color(secondResult);
+        if (codonsAreHighlighted) {
+            color(sequence);
+            color(firstResult);
+            if (spinner.getSelectedItem().toString().equals("тРНК")) {
+                color(secondResult);
+            }
         }
-        if (sequence.getText().length() % 3 == 0) {
+        if (sequence.getText().length() % 3 == 0 && sequence.getText().length() != 0) {
             explanation.setEnabled(true);
         }
+        DnaIsMatrix.setChecked(savedInstanceState.getBoolean("DnaIsMatrix"));
     }
 
     @Override
@@ -168,7 +257,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.A:
                 sequence.append(getResources().getString(R.string.adenine));
-
                 break;
 
             case R.id.T:
@@ -189,21 +277,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.erase_button:
                 if (sequence.getText().toString().length() > 0) {
                     sequence.setText(sequence.getText().toString().substring(0, sequence.getText().toString().length() - 1));
-                    color(sequence);
-                    color(firstResult);
+                    if (codonsAreHighlighted) {
+                        color(sequence);
+                        color(firstResult);
+//                        if (DnaIsMatrix.isChecked()) {
+//                            color(secondResult);
+//                        }
+                    }
                 }
                 if (sequence.getText().length() == 0) {
                     clearFields();
                 }
                 if (sequence.getText().length() % 3 == 0 && sequence.getText().length() != 0) {
-                    color(firstResult);
+                    if (codonsAreHighlighted) {
+                        color(firstResult);
+//                        if (DnaIsMatrix.isChecked()) {
+//                            color(secondResult);
+//                        }
+                    }
                     beforeEnteringText.setText("");
                     explanation.setEnabled(true);
 
                 } else if (sequence.getText().length() % 3 != 0){
                     beforeEnteringText.setText(getResources().getString(R.string.incomlete_sequence));
                     explanation.setEnabled(false);
-                    color(firstResult);
+                    if (codonsAreHighlighted) {
+                        color(firstResult);
+                    }
                 }
                 if (sequence.getText().length() < 3) {
                     firstResult.setText("");
@@ -214,12 +314,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 switch ((int)spinner.getSelectedItemId()) {
                     case ID_DNA:
                         if (sequence.getText().length() % 3 == 0 && sequence.getText().length() != 0) {
-                            String[] solvedArr = solveForDNA();
+                            String[] solvedArr;
+                            if (DnaIsMatrix.isChecked()) {
+                                solvedArr = solveForMatrixDNA();
+                            } else {
+                                solvedArr = solveForDNA();
+                            }
 
                             firstResult.setText("-" + solvedArr[0] + "-");
-                            color(firstResult);
                             secondResult.setText(solvedArr[1]);
                             thirdResult.setText(solvedArr[2]);
+
+                            if (codonsAreHighlighted) {
+                                color(firstResult);
+                            }
                         } else if (sequence.getText().length() % 2 != 0 && sequence.getText().length() % 3 != 0) {
                             try {
                                 firstResult.setText(firstResult.getText().toString().substring(0, firstResult.getText().length() - 4) + "-");
@@ -235,7 +343,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (sequence.getText().length() % 3 == 0 && sequence.getText().length() != 0) {
                             String[] solvedArr = solveForIRNA();
                             firstResult.setText("-" + solvedArr[0] + "-");
-                            color(firstResult);
+                            if (codonsAreHighlighted) {
+                                color(firstResult);
+                            }
                             secondResult.setText(solvedArr[1]);
                             thirdResult.setText(solvedArr[2]);
                         } else if (sequence.getText().toString().length() % 2 != 0 && sequence.getText().toString().length() % 3 != 0) {
@@ -253,9 +363,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (sequence.getText().length() % 3 == 0 && sequence.getText().length() != 0) {
                             String[] solvedArr = solveForTRNA();
                             firstResult.setText("-" + solvedArr[0] + "-");
-                            color(firstResult);
                             secondResult.setText("-" + solvedArr[1] + "-");
-                            color(secondResult);
+                            if (codonsAreHighlighted) {
+                                color(firstResult);
+                                color(secondResult);
+                            }
                             thirdResult.setText(solvedArr[2]);
                         } else if (sequence.getText().length() % 2 != 0 && sequence.getText().length() % 3 != 0) {
                             try {
@@ -283,26 +395,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     openExplanationActivity.putExtra("secondResult", secondResult.getText().toString());
                 }
                 openExplanationActivity.putExtra("thirdResult", thirdResult.getText().toString());
+                openExplanationActivity.putExtra("DNA_is_matrix", DnaIsMatrix.isChecked());
 
                 startActivity(openExplanationActivity);
 
                 break;
         }
         if (v.getId() == R.id.A || v.getId() == R.id.T || v.getId() == R.id.G || v.getId() == R.id.C) {
-            color(sequence);
-            color(firstResult);
+            if (codonsAreHighlighted) {
+                color(sequence);
+                color(firstResult);
+            }
             beforeEnteringText.setText("");
             switch ((int)spinner.getSelectedItemId()) {
                 case ID_DNA:
                     if (sequence.getText().toString().length() % 3 == 0) {
-                        color(sequence);
+                        if (codonsAreHighlighted) {
+                            color(sequence);
+                        }
 
-                        String[] solvedArr = solveForDNA();
+                        String[] solvedArr;
+                        if (DnaIsMatrix.isChecked()) {
+                            solvedArr = solveForMatrixDNA();
+                        } else {
+                            solvedArr = solveForDNA();
+                        }
 
                         firstResult.setText("-" + solvedArr[0] + "-");
-                        color(firstResult);
                         secondResult.setText(solvedArr[1]);
                         thirdResult.setText(solvedArr[2]);
+
+                        if (codonsAreHighlighted) {
+                            color(firstResult);
+//                            if (DnaIsMatrix.isChecked()) {
+//                                color(secondResult);
+//                            }
+                        }
 
                         explanation.setEnabled(true);
 
@@ -315,11 +443,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 case ID_mRNA:
                     if (sequence.getText().toString().length() % 3 == 0) {
-                        color(sequence);
+                        if (codonsAreHighlighted) {
+                            color(sequence);
+                        }
 
                         String[] solvedArr = solveForIRNA();
                         firstResult.setText("-" + solvedArr[0] + "-");
-                        color(firstResult);
+                        if (codonsAreHighlighted) {
+                            color(firstResult);
+                        }
                         secondResult.setText(solvedArr[1]);
                         thirdResult.setText(solvedArr[2]);
                         explanation.setEnabled(true);
@@ -331,13 +463,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case ID_tRNA:
                     if (sequence.getText().length() % 3 == 0) {
-                        color(sequence);
 
                         String[] solvedArr = solveForTRNA();
                         firstResult.setText("-" + solvedArr[0] + "-");
-                        color(firstResult);
+
                         secondResult.setText("-" + solvedArr[1] + "-");
-                        color(secondResult);
+
+                        if (codonsAreHighlighted) {
+                            color(sequence);
+                            color(firstResult);
+                            color(secondResult);
+                        }
                         thirdResult.setText(solvedArr[2]);
                         explanation.setEnabled(true);
 
@@ -362,6 +498,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (spinnerInteractionIsAllowed) {
                     clearFields();
                 }
+
+                DnaIsMatrix.setEnabled(true);
                 break;
 
             case ID_mRNA:
@@ -372,6 +510,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (spinnerInteractionIsAllowed) {
                     clearFields();
                 }
+                DnaIsMatrix.setChecked(false);
+                DnaIsMatrix.setEnabled(false);
                 break;
             case ID_tRNA:
                 firstResultHeading.setText(getResources().getString(R.string.DNA));
@@ -381,6 +521,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (spinnerInteractionIsAllowed) {
                     clearFields();
                 }
+                DnaIsMatrix.setChecked(false);
+                DnaIsMatrix.setEnabled(false);
                 break;
 
         }
@@ -389,6 +531,90 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    public String[] solveForMatrixDNA() {
+
+        String codon;
+
+        String sequenceString = sequence.getText().toString();
+        String[] seqSplitted = sequenceString.split(""); // [, А, Т, Г]
+        String[] seqArr = new String[sequenceString.length()];
+        for (int i = 0; i < seqArr.length; i++) {
+            seqArr[i] = seqSplitted[i + 1];
+        }
+
+        StringBuilder seq = new StringBuilder();
+        StringBuilder iRNA_codon = new StringBuilder();
+        StringBuilder tRNA_codon = new StringBuilder();
+        StringBuilder aminoacid = new StringBuilder("-");
+
+        for (int i = 0; i < seqArr.length; i++) {
+            seq.append(seqArr[i]);
+        }
+
+        String[] iRNAseqArr = new String[seqArr.length];
+        String[] tRNAseqArr = seqArr;
+        String[] AAseqArr = new String[seqArr.length / 3];
+        for (int i = 0; i < seq.length(); i += 3) {
+            codon = seq.substring(i, i + 3);
+            preSolveForMatrixDNA(i / 3, codon, iRNAseqArr, tRNAseqArr, AAseqArr);
+        }
+
+
+        for (String i :
+                iRNAseqArr) {
+            iRNA_codon.append(i);
+        }
+
+        for (int i = 1; i < tRNAseqArr.length + 1; i++) {
+            tRNA_codon.append(tRNAseqArr[i - 1]);
+            if (i % 3 == 0) {
+                tRNA_codon.append("; ");
+            }
+        }
+
+        for (String i :
+                AAseqArr) {
+            aminoacid.append(i).append("-");
+        }
+        return new String[] {iRNA_codon.toString(), tRNA_codon.toString(), aminoacid.toString()};
+    }
+
+    public void preSolveForMatrixDNA(int iter, String codon, String[] iRNAseqArr, String[] tRNAseqArr, String[] AAseqArr) {
+        String[] codonToArrPre = codon.split(""); // T, T, T
+        String[] codonToArr = new String[codon.length()];
+        for (int i = 0; i < codonToArr.length; i++) {
+            codonToArr[i] = codonToArrPre[i + 1];
+        }
+
+        int j = iter * 3;
+        for (int i = 0; i < codon.length(); i++) {
+
+            if (codonToArr[i].equals(ADENINE)) {
+                tRNAseqArr[j + i] = URACIL;
+            } else if (codonToArr[i].equals(THYMINE)) {
+                tRNAseqArr[j + i] = ADENINE;
+            } else if (codonToArr[i].equals(GUANINE)) {
+                tRNAseqArr[j + i] = CYTOSINE;
+            } else if (codonToArr[i].equals(CYTOSINE)) {
+                tRNAseqArr[j + i] = GUANINE;
+            }
+
+        }
+
+        for (int i = 0; i < codon.length(); i++) {
+            if (codonToArr[i].equals(THYMINE)) {
+                iRNAseqArr[j + i] = URACIL;
+            } else if (codonToArr[i].equals(GUANINE)) {
+                iRNAseqArr[j + i] = GUANINE;
+            } else if (codonToArr[i].equals(CYTOSINE)) {
+                iRNAseqArr[j + i] = CYTOSINE;
+            } else if (codonToArr[i].equals(ADENINE)) {
+                iRNAseqArr[j + i] = ADENINE;
+            }
+        }
+        handleAminoAcid(iRNAseqArr, AAseqArr);
     }
 
     public String[] solveForDNA() {

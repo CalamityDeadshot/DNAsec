@@ -1,5 +1,21 @@
 <resources>
     <string name="app_name">DNAsec</string>
+    <string name="settings">Настройки</string>
+    <string name="explanation_activity_title">Объяснение</string>
+    <string name="language">Язык</string>
+    <string-array name="languages">
+        <item>Русский</item>
+        <item>English</item>
+    </string-array>
+    <string name="highlight_codons">Выделять кодоны цветом</string>
+    <string name="results_updated">Изменения будут применены при вводе нового кодона</string>
+
+    <string name="adenine_uracil_complimentary">Аденин комплементарен урацилу</string>
+    <string name="uracil_adenine_complimentary">Урацил комплементарен аденину</string>
+    <string name="thymine_adenine_complimentary">Тимин комплементарен аденину</string>
+    <string name="guanine_cytosine_complimentary">Гуанин комплементарен цитозину</string>
+    <string name="cytosine_guanine_complimentary">Цитозин комплементарен гуанину</string>
+
     <string name="given">Дано:</string>
     <string name="result">Результат:</string>
     <string name="start_typing">Начните вводить цепь</string>
@@ -9,38 +25,65 @@
     <string name="explanation">Как это получилось?</string>
     <string name="sequence">Последовательность</string>
     <string name="start_sequence">Исходная последовательность:</string>
-    
+    <string name="DNA_is_matrix_for_all">Известно, что все виды РНК синтезируются на ДНК-матрице</string>
+
     <string name="adenine">А</string>
     <string name="guanine">Г</string>
     <string name="cytosine">Ц</string>
     <string name="thymine">Т</string>
     <string name="uracil">У</string>
-    
-    <!-- Аминокислоты -->
-    
-    <string name="phenylalanine">Фен</string>
-    <string name="leucine">Лей</string>
-    <string name="isoleucine">Иле</string>
-    <string name="methionine">Мет</string>
-    <string name="valine">Вал</string>
-    <string name="serine">Сер</string>
-    <string name="proline">Про</string>
-    <string name="threonine">Тре</string>
-    <string name="tyrosine">Тир</string>
-    <string name="alanine">Ала</string>
-    <string name="stop">———</string>
-    <string name="histidine">Гис</string>
-    <string name="glutamine">Глн</string>
-    <string name="asparagine">Асн</string>
-    <string name="lysine">Лиз</string>
-    <string name="aspartic_acid">Асп</string>
-    <string name="glutamine_acid">Глу</string>
-    <string name="cysteine">Цис</string>
-    <string name="tryptophan">Три</string>
-    <string name="arginine">Арг</string>
-    <string name="glycine">Гли</string>
 
-    <!-- /Аминокислоты -->
+    <!-- Сокращённые названия аминокислот -->
+
+    <string name="phenylalanine_shortened">Фен</string>
+    <string name="leucine_shortened">Лей</string>
+    <string name="isoleucine_shortened">Иле</string>
+    <string name="methionine_shortened">Мет</string>
+    <string name="valine_shortened">Вал</string>
+    <string name="serine_shortened">Сер</string>
+    <string name="proline_shortened">Про</string>
+    <string name="threonine_shortened">Тре</string>
+    <string name="tyrosine_shortened">Тир</string>
+    <string name="alanine_shortened">Ала</string>
+    <string name="stop_shortened">———</string>
+    <string name="histidine_shortened">Гис</string>
+    <string name="glutamine_shortened">Глн</string>
+    <string name="asparagine_shortened">Асн</string>
+    <string name="lysine_shortened">Лиз</string>
+    <string name="aspartic_acid_shortened">Асп</string>
+    <string name="glutamine_acid_shortened">Глу</string>
+    <string name="cysteine_shortened">Цис</string>
+    <string name="tryptophan_shortened">Три</string>
+    <string name="arginine_shortened">Арг</string>
+    <string name="glycine_shortened">Гли</string>
+
+    <!-- /Сокращённые названия аминокислот -->
+
+    <!-- Полные названия аминокислот -->
+
+    <string name="phenylalanine">Фенилаланин</string>
+    <string name="leucine">Лейцин</string>
+    <string name="isoleucine">Изолейцин</string>
+    <string name="methionine">Метионин</string>
+    <string name="valine">Валин</string>
+    <string name="serine">Серин</string>
+    <string name="proline">Пролин</string>
+    <string name="threonine">Треонин</string>
+    <string name="tyrosine">Тирозин</string>
+    <string name="alanine">Аланин</string>
+    <string name="stop">Стоп-кодон</string>
+    <string name="histidine">Гистидин</string>
+    <string name="glutamine">Глутамин</string>
+    <string name="asparagine">Аспарагин</string>
+    <string name="lysine">Лизин</string>
+    <string name="aspartic_acid">Аспарагиновая кислота</string>
+    <string name="glutamine_acid">Глутаминовая кислота</string>
+    <string name="cysteine">Цистеин</string>
+    <string name="tryptophan">Триптофан</string>
+    <string name="arginine">Аргинин</string>
+    <string name="glycine">Глицин</string>
+
+    <!-- /Полные названия аминокислот -->
 
     <string name="DNA">ДНК</string>
     <string name="iRNA">иРНК</string>
@@ -60,4 +103,8 @@
     <string name="tRNA_translation_explanation">Используя <a href="https://ru.wikipedia.org/wiki/Комплементарность_(биология)">принцип комплиментарности</a>, из фрагмента тРНК можно восстановить фрагмент иРНК, с которым молекулы тРНК взаимодействовали во время трансляции:</string>
     <string name="tRNA_transcription_explanation">Используя принцип комплиментарности, из фрагмента иРНК можно восстановить фрагмент ДНК, на котором была синтезирована иРНК:</string>
 
+    <string name="DNA_is_matrix_first_step">Известно, что все виды РНК синтезируются на ДНК-матрице.
+        \nТогда по <a href="https://ru.wikipedia.org/wiki/Комплементарность_(биология)">принципу комплементарности</a> на матричной ДНК синтезируется тРНК: </string>
+    <string name="DNA_is_matrix_second_step">По принципу комплементарности на основе антикодонов тРНК находим нуклеотидную последовательность кодонов иРНК:</string>
+    <string name="DNA_is_matrix_third_step">На основе кодонов иРНК синтезируется аминокислотная последовательность:</string>
 </resources>

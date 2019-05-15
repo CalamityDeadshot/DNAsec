@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.dnasec.adapters.AminoacidAdapter;
 import com.app.dnasec.adapters.SimplePairsAdapter;
@@ -36,6 +37,7 @@ public class ExplanationActivity extends AppCompatActivity {
     private final int URACIL = 4;
 
     int sequenceType;
+    boolean DnaIsMatrix;
     String mainSequence;
     String firstResult;
     String secondResult;
@@ -52,8 +54,11 @@ public class ExplanationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_explanation);
 
+        setTitle(R.string.explanation_activity_title);
+
         Intent extras = getIntent();
         sequenceType = (int)(extras.getLongExtra("sequence_type", DNA_SEQUENCE));
+        DnaIsMatrix = extras.getBooleanExtra("DNA_is_matrix", false);
         mainSequence = extras.getStringExtra("sequence");
         firstResult = extras.getStringExtra("firstResult");
         secondResult = extras.getStringExtra("secondResult");
@@ -67,9 +72,6 @@ public class ExplanationActivity extends AppCompatActivity {
 
         HandleRecyclers handler = new HandleRecyclers();
         handler.execute();
-
-
-
 
     }
 
@@ -109,8 +111,6 @@ public class ExplanationActivity extends AppCompatActivity {
         String[] firstResultNucleotides = new String[firstResultNucleotidesPre.length - 1];
         if (firstResultNucleotidesPre.length - 1 >= 0)
             System.arraycopy(firstResultNucleotidesPre, 1, firstResultNucleotides, 0, firstResultNucleotidesPre.length - 1);
-
-        System.out.println(Arrays.toString(firstResultNucleotides));
 
         return firstResultNucleotides;
     }
@@ -175,9 +175,18 @@ public class ExplanationActivity extends AppCompatActivity {
             switch (sequenceType) {
                 case DNA_SEQUENCE:
                     sequenceName.setText(getResources().getString(R.string.DNA));
-                    linkedText.setText(R.string.DNA_transcription_explanation);
-                    secondExpl.setText(R.string.DNA_translation_explanation);
-                    thirdExpl.setText(R.string.DNA_acid_synthesis_explanation);
+                    if (!DnaIsMatrix) {
+                        linkedText.setText(R.string.DNA_transcription_explanation);
+                        secondExpl.setText(R.string.DNA_translation_explanation);
+                        thirdExpl.setText(R.string.DNA_acid_synthesis_explanation);
+                    } else {
+                        linkedText.setText(R.string.DNA_is_matrix_first_step);
+                        secondExpl.setText(R.string.DNA_is_matrix_second_step);
+                        thirdExpl.setText(R.string.DNA_is_matrix_third_step);
+                        ((TextView) findViewById(R.id.first_result_bottom)).setText(R.string.tRNA);
+                        ((TextView) findViewById(R.id.second_result_bottom)).setText(R.string.iRNA);
+                        ((TextView) findViewById(R.id.second_result_top)).setText(R.string.tRNA);
+                    }
 
                     for (int i = 0; i < sequenceNucleotides.length; i++) {
                         pairs1.add(
