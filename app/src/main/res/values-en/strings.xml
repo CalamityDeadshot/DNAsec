@@ -85,4 +85,5 @@
     <string name="tryptophan">Tryptophan</string>
     <string name="arginine">Arginine</string>
     <string name="glycine">Glycine</string>
+    <string name="genome_table">Genetic code table</string>
 </resources>

@@ -51,13 +51,16 @@
         android:id="@+id/paragraph_layout"
         android:visibility="visible"
         tools:visibility="visible"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_gravity="top">
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@mipmap/genome_table" />
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/genome_table" />
 
     </RelativeLayout>
 

@@ -1,18 +1,20 @@
 package com.app.dnasec;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.dnasec.adapters.AminoacidAdapter;
 import com.app.dnasec.adapters.SimplePairsAdapter;
@@ -20,9 +22,11 @@ import com.app.dnasec.adapters.models.CodonAminoacidPairModel;
 import com.app.dnasec.adapters.models.PairModel;
 import com.app.dnasec.views.CodonAminoacidPair;
 import com.app.dnasec.views.NucleotidesPair;
+import com.github.florent37.expansionpanel.ExpansionLayout;
+import com.tooltip.Tooltip;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Objects;
 
 public class ExplanationActivity extends AppCompatActivity {
 
@@ -49,6 +53,10 @@ public class ExplanationActivity extends AppCompatActivity {
 
     TextView sequenceName;
 
+    ExpansionLayout expansionLayout;
+
+    RecyclerView firstResultList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +80,19 @@ public class ExplanationActivity extends AppCompatActivity {
 
         HandleRecyclers handler = new HandleRecyclers();
         handler.execute();
+
+
+        final ScrollView scroll = findViewById(R.id.scrollView3);
+        expansionLayout = findViewById(R.id.expansionLayout);
+        expansionLayout.addListener(new ExpansionLayout.Listener() {
+            @Override
+            public void onExpansionChanged(ExpansionLayout expansionLayout, boolean expanded) {
+                if (expanded) {
+                    scroll.fullScroll(View.FOCUS_DOWN);
+                }
+            }
+        });
+
 
     }
 
@@ -340,7 +361,7 @@ public class ExplanationActivity extends AppCompatActivity {
             LinearLayoutManager horizontalLayout
                     = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
 
-            RecyclerView firstResultList = findViewById(R.id.first_tesult_list);
+            firstResultList = findViewById(R.id.first_tesult_list);
             firstResultList.setAdapter((RecyclerView.Adapter)explanationAdapter.get(0));
             ((ProgressBar)findViewById(R.id.progressBar_1)).setVisibility(View.GONE);
             firstResultList.setLayoutManager(horizontalLayout);
@@ -360,6 +381,16 @@ public class ExplanationActivity extends AppCompatActivity {
             thirdResultList.setAdapter((RecyclerView.Adapter)explanationAdapter.get(2));
             ((ProgressBar)findViewById(R.id.progressBar_3)).setVisibility(View.GONE);
             thirdResultList.setLayoutManager(horizontalLayout2);
+
+            /*Tooltip tooltip = new Tooltip.Builder(firstResultList.findViewHolderForItemId(horizontalLayout.findFirstVisibleItemPosition()).itemView)
+                    .setTextColor(Color.WHITE)
+                    .setGravity(Gravity.TOP)
+                    .setBackgroundColor(getResources().getColor(R.color.colorPrimary))
+                    .setCancelable(true)
+                    .setCornerRadius(15f)
+                    .setText("Tap to view additional info")
+                    .show();*/
+
         }
     }
 

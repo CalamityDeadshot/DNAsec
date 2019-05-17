@@ -2,12 +2,11 @@ package com.app.dnasec;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
-import android.widget.Spinner;
 import android.widget.Switch;
 
 public class SettingsActivity extends AppCompatActivity {
