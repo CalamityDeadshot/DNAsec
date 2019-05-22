@@ -382,15 +382,6 @@ public class ExplanationActivity extends AppCompatActivity {
             ((ProgressBar)findViewById(R.id.progressBar_3)).setVisibility(View.GONE);
             thirdResultList.setLayoutManager(horizontalLayout2);
 
-            /*Tooltip tooltip = new Tooltip.Builder(firstResultList.findViewHolderForItemId(horizontalLayout.findFirstVisibleItemPosition()).itemView)
-                    .setTextColor(Color.WHITE)
-                    .setGravity(Gravity.TOP)
-                    .setBackgroundColor(getResources().getColor(R.color.colorPrimary))
-                    .setCancelable(true)
-                    .setCornerRadius(15f)
-                    .setText("Tap to view additional info")
-                    .show();*/
-
         }
     }
 
