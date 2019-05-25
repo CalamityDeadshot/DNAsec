@@ -3,4 +3,5 @@
     android:id="@+id/item"
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
+    android:background="@drawable/pair_background"
     xmlns:android="http://schemas.android.com/apk/res/android"/>
