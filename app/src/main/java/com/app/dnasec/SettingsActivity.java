@@ -3,6 +3,8 @@ package com.app.dnasec;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -23,7 +25,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        Switch highlightCodonsSwitch = findViewById(R.id.highlight_codons_switch);
+        SwitchCompat highlightCodonsSwitch = findViewById(R.id.highlight_codons_switch);
 
         preferencesEditor = preferences.edit();
         highlightCodonsSwitch.setChecked(preferences.getBoolean("KEY_HIGHLIGHT", false));

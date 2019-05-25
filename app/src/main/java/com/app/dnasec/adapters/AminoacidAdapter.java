@@ -106,12 +106,12 @@ public class AminoacidAdapter extends RecyclerView.Adapter<AminoacidAdapter.View
             switch (type) {
                 case ADENINE:
                     nucleotides[i].setText(R.string.adenine);
-                    nucleotides[i].setBackgroundResource(R.drawable.adenine_top_background);
+                    nucleotides[i].setBackgroundResource(R.drawable.adenine_top_background_vector);
                     break;
 
                 case URACIL:
                     nucleotides[i].setText(R.string.uracil);
-                    nucleotides[i].setBackgroundResource(R.drawable.uracil_top_background);
+                    nucleotides[i].setBackgroundResource(R.drawable.thymine_top_background_vector);
                     break;
 
                 case GUANINE:
@@ -121,7 +121,7 @@ public class AminoacidAdapter extends RecyclerView.Adapter<AminoacidAdapter.View
 
                 case CYTOSINE:
                     nucleotides[i].setText(R.string.cytosine);
-                    nucleotides[i].setBackgroundResource(R.drawable.cytosine_top_background);
+                    nucleotides[i].setBackgroundResource(R.drawable.cytosine_top_background_vector);
                     break;
             }
             i++;

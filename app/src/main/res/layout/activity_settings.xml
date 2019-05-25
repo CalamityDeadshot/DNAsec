@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/highlight_codons_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

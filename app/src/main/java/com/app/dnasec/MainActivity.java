@@ -2,6 +2,7 @@ package com.app.dnasec;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import androidx.annotation.Nullable;

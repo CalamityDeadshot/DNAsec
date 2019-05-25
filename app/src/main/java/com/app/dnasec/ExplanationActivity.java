@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
@@ -63,6 +65,8 @@ public class ExplanationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_explanation);
 
         setTitle(R.string.explanation_activity_title);
+
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         Intent extras = getIntent();
         sequenceType = (int)(extras.getLongExtra("sequence_type", DNA_SEQUENCE));

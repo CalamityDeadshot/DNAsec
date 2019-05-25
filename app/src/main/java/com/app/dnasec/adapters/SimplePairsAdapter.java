@@ -69,13 +69,13 @@ public class SimplePairsAdapter extends RecyclerView.Adapter<SimplePairsAdapter.
         switch (model.getTopNucleotideName()) {
             case ADENINE:
                 holder.topNucleotide.setText(mContext.getResources().getString(R.string.adenine));
-                holder.topNucleotide.setBackgroundResource(R.drawable.adenine_top_background);
+                holder.topNucleotide.setBackgroundResource(R.drawable.adenine_top_background_vector);
                 hideTriples();
                 break;
 
             case THYMINE:
                 holder.topNucleotide.setText(mContext.getResources().getString(R.string.thymine));
-                holder.topNucleotide.setBackgroundResource(R.drawable.thymine_top_background);
+                holder.topNucleotide.setBackgroundResource(R.drawable.thymine_top_background_vector);
                 hideTriples();
                 break;
 
@@ -87,20 +87,20 @@ public class SimplePairsAdapter extends RecyclerView.Adapter<SimplePairsAdapter.
 
             case CYTOSINE:
                 holder.topNucleotide.setText(mContext.getResources().getString(R.string.cytosine));
-                holder.topNucleotide.setBackgroundResource(R.drawable.cytosine_top_background);
+                holder.topNucleotide.setBackgroundResource(R.drawable.cytosine_top_background_vector);
                 hideDoubles();
                 break;
 
             case URACIL:
                 holder.topNucleotide.setText(mContext.getResources().getString(R.string.uracil));
-                holder.topNucleotide.setBackgroundResource(R.drawable.uracil_top_background);
+                holder.topNucleotide.setBackgroundResource(R.drawable.thymine_top_background_vector);
                 hideTriples();
         }
 
         switch (model.getBottomNucleotideName()) {
             case ADENINE:
                 holder.bottomNucleotide.setText(mContext.getResources().getString(R.string.adenine));
-                holder.bottomNucleotide.setBackgroundResource(R.drawable.adenine_bottom_background);
+                holder.bottomNucleotide.setBackgroundResource(R.drawable.adenine_bottom_background_vector);
                 break;
 
             case GUANINE:
@@ -110,17 +110,17 @@ public class SimplePairsAdapter extends RecyclerView.Adapter<SimplePairsAdapter.
 
             case THYMINE:
                 holder.bottomNucleotide.setText(R.string.thymine);
-                holder.bottomNucleotide.setBackgroundResource(R.drawable.thymine_bottom_background);
+                holder.bottomNucleotide.setBackgroundResource(R.drawable.thymine_bottom_background_vector);
                 break;
 
             case CYTOSINE:
                 holder.bottomNucleotide.setText(mContext.getResources().getString(R.string.cytosine));
-                holder.bottomNucleotide.setBackgroundResource(R.drawable.cytosine_bottom_background);
+                holder.bottomNucleotide.setBackgroundResource(R.drawable.cytosine_bottom_background_vector);
                 break;
 
             case URACIL:
                 holder.bottomNucleotide.setText(mContext.getResources().getString(R.string.uracil));
-                holder.bottomNucleotide.setBackgroundResource(R.drawable.uracil_bottom_background);
+                holder.bottomNucleotide.setBackgroundResource(R.drawable.thymine_bottom_background_vector);
                 break;
         }
 
