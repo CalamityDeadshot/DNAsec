@@ -877,49 +877,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     void handleAminoAcid(String[] iRNAseqArr, String[] AAseqArr) {
 
         int c = 0;
+        String aminoacid;
         for (int i = 0; i < iRNAseqArr.length - 2; i += 3, c++) {
 
-            if ((URACIL + URACIL + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + URACIL + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            aminoacid = iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2];
+
+            if ((URACIL + URACIL + URACIL).equals(aminoacid) || (URACIL + URACIL + CYTOSINE).equals(aminoacid)) {
                 AAseqArr[c] = phenylalanine;
-            } else if ((URACIL + URACIL + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + URACIL + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + URACIL + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + URACIL + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + URACIL + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + URACIL + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((URACIL + URACIL + ADENINE).equals(aminoacid) || (URACIL + URACIL + GUANINE).equals(aminoacid) || (CYTOSINE + URACIL + URACIL).equals(aminoacid) || (CYTOSINE + URACIL + CYTOSINE).equals(aminoacid) || (CYTOSINE + URACIL + ADENINE).equals(aminoacid) || (CYTOSINE + URACIL + GUANINE).equals(aminoacid)) {
                 AAseqArr[c] = leucine;
-            } else if ((URACIL + CYTOSINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + CYTOSINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + CYTOSINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + CYTOSINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + GUANINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + GUANINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((URACIL + CYTOSINE + URACIL).equals(aminoacid) || (URACIL + CYTOSINE + CYTOSINE).equals(aminoacid) || (URACIL + CYTOSINE + ADENINE).equals(aminoacid) || (URACIL + CYTOSINE + GUANINE).equals(aminoacid) || (ADENINE + GUANINE + URACIL).equals(aminoacid) || (ADENINE + GUANINE + CYTOSINE).equals(aminoacid)) {
                 AAseqArr[c] = serine;
-            } else if ((URACIL + ADENINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + ADENINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((URACIL + ADENINE + URACIL).equals(aminoacid) || (URACIL + ADENINE + CYTOSINE).equals(aminoacid)) {
                 AAseqArr[c] = tyrosine;
-            } else if ((URACIL + GUANINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + GUANINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((URACIL + GUANINE + URACIL).equals(aminoacid) || (URACIL + GUANINE + CYTOSINE).equals(aminoacid)) {
                 AAseqArr[c] = cysteine;
-            } else if ((URACIL + GUANINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((URACIL + GUANINE + GUANINE).equals(aminoacid)) {
                 AAseqArr[c] = tryptophan;
-            } else if ((CYTOSINE + CYTOSINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + CYTOSINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + CYTOSINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + CYTOSINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((CYTOSINE + CYTOSINE + URACIL).equals(aminoacid) || (CYTOSINE + CYTOSINE + CYTOSINE).equals(aminoacid) || (CYTOSINE + CYTOSINE + ADENINE).equals(aminoacid) || (CYTOSINE + CYTOSINE + GUANINE).equals(aminoacid)) {
                 AAseqArr[c] = proline;
-            } else if ((CYTOSINE + ADENINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + ADENINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((CYTOSINE + ADENINE + URACIL).equals(aminoacid) || (CYTOSINE + ADENINE + CYTOSINE).equals(aminoacid)) {
                 AAseqArr[c] = histidine;
-            } else if ((CYTOSINE + GUANINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + GUANINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + GUANINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + GUANINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + GUANINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + GUANINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((CYTOSINE + GUANINE + URACIL).equals(aminoacid) || (CYTOSINE + GUANINE + CYTOSINE).equals(aminoacid) || (CYTOSINE + GUANINE + ADENINE).equals(aminoacid) || (CYTOSINE + GUANINE + GUANINE).equals(aminoacid) || (ADENINE + GUANINE + ADENINE).equals(aminoacid) || (ADENINE + GUANINE + GUANINE).equals(aminoacid)) {
                 AAseqArr[c] = arginine;
-            } else if ((ADENINE + URACIL + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + URACIL + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + URACIL + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((ADENINE + URACIL + URACIL).equals(aminoacid) || (ADENINE + URACIL + CYTOSINE).equals(aminoacid) || (ADENINE + URACIL + ADENINE).equals(aminoacid)) {
                 AAseqArr[c] = isoleucine;
-            } else if ((ADENINE + CYTOSINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + CYTOSINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + CYTOSINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + CYTOSINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((ADENINE + CYTOSINE + URACIL).equals(aminoacid) || (ADENINE + CYTOSINE + CYTOSINE).equals(aminoacid) || (ADENINE + CYTOSINE + ADENINE).equals(aminoacid) || (ADENINE + CYTOSINE + GUANINE).equals(aminoacid)) {
                 AAseqArr[c] = threonine;
-            } else if ((ADENINE + ADENINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + ADENINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((ADENINE + ADENINE + URACIL).equals(aminoacid) || (ADENINE + ADENINE + CYTOSINE).equals(aminoacid)) {
                 AAseqArr[c] = asparagine;
-            } else if ((ADENINE + URACIL + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((ADENINE + URACIL + GUANINE).equals(aminoacid)) {
                 AAseqArr[c] = methionine;
-            } else if ((ADENINE + ADENINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (ADENINE + ADENINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((ADENINE + ADENINE + ADENINE).equals(aminoacid) || (ADENINE + ADENINE + GUANINE).equals(aminoacid)) {
                 AAseqArr[c] = lysine;
-            } else if ((GUANINE + URACIL + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + URACIL + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + URACIL + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + URACIL + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((GUANINE + URACIL + URACIL).equals(aminoacid) || (GUANINE + URACIL + CYTOSINE).equals(aminoacid) || (GUANINE + URACIL + ADENINE).equals(aminoacid) || (GUANINE + URACIL + GUANINE).equals(aminoacid)) {
                 AAseqArr[c] = valine;
-            } else if ((GUANINE + CYTOSINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + CYTOSINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + CYTOSINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + CYTOSINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((GUANINE + CYTOSINE + URACIL).equals(aminoacid) || (GUANINE + CYTOSINE + CYTOSINE).equals(aminoacid) || (GUANINE + CYTOSINE + ADENINE).equals(aminoacid) || (GUANINE + CYTOSINE + GUANINE).equals(aminoacid)) {
                 AAseqArr[c] = alanine;
-            } else if ((GUANINE + ADENINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + ADENINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
-                AAseqArr[c] = asparagine;
-            } else if ((GUANINE + ADENINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + ADENINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((GUANINE + ADENINE + URACIL).equals(aminoacid) || (GUANINE + ADENINE + CYTOSINE).equals(aminoacid)) {
+                AAseqArr[c] = aspartic_acid;
+            } else if ((GUANINE + ADENINE + ADENINE).equals(aminoacid) || (GUANINE + ADENINE + GUANINE).equals(aminoacid)) {
                 AAseqArr[c] = glutamine_acid;
-            } else if ((GUANINE + GUANINE + URACIL).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + GUANINE + CYTOSINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + GUANINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (GUANINE + GUANINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((GUANINE + GUANINE + URACIL).equals(aminoacid) || (GUANINE + GUANINE + CYTOSINE).equals(aminoacid) || (GUANINE + GUANINE + ADENINE).equals(aminoacid) || (GUANINE + GUANINE + GUANINE).equals(aminoacid)) {
                 AAseqArr[c] = glycine;
-            } else if ((URACIL + ADENINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + ADENINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (URACIL + GUANINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((URACIL + ADENINE + ADENINE).equals(aminoacid) || (URACIL + ADENINE + GUANINE).equals(aminoacid) || (URACIL + GUANINE + ADENINE).equals(aminoacid)) {
                 AAseqArr[c] = stop;
-            } else if ((CYTOSINE + ADENINE + ADENINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2])) || (CYTOSINE + ADENINE + GUANINE).equals((iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2]))) {
+            } else if ((CYTOSINE + ADENINE + ADENINE).equals(aminoacid) || (CYTOSINE + ADENINE + GUANINE).equals(aminoacid)) {
                 AAseqArr[c] = glutamine;
             }
         }
