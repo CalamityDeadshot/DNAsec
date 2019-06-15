@@ -86,4 +86,5 @@
     <string name="arginine">Arginine</string>
     <string name="glycine">Glycine</string>
     <string name="genome_table">Genetic code table</string>
+    <string name="enable_animation">Enable animation</string>
 </resources>

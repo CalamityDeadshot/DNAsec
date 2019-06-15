@@ -9,11 +9,9 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
-import android.widget.Switch;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
-    private SharedPreferences preferences;
     SharedPreferences.Editor preferencesEditor;
 
     @Override
@@ -23,30 +21,27 @@ public class SettingsActivity extends AppCompatActivity {
 
         setTitle(R.string.settings);
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
 
         SwitchCompat highlightCodonsSwitch = findViewById(R.id.highlight_codons_switch);
+        SwitchCompat enableAnimationSwitch = findViewById(R.id.enable_animation_switch);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferencesEditor = preferences.edit();
-        highlightCodonsSwitch.setChecked(preferences.getBoolean("KEY_HIGHLIGHT", false));
+        highlightCodonsSwitch.setChecked(preferences.getBoolean("KEY_HIGHLIGHT", true));
+        enableAnimationSwitch.setChecked(preferences.getBoolean("KEY_ANIMATION", true));
 
-        highlightCodonsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                preferencesEditor.putBoolean("KEY_HIGHLIGHT", isChecked);
-            }
-        });
+        highlightCodonsSwitch.setOnCheckedChangeListener(this);
+        enableAnimationSwitch.setOnCheckedChangeListener(this);
 
 
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                preferencesEditor.apply();
-                finish();
-                break;
+        if (item.getItemId() == android.R.id.home) {
+            preferencesEditor.apply();
+            finish();
         }
         return true;
     }
@@ -59,5 +54,18 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId()) {
+            case R.id.highlight_codons_switch:
+                preferencesEditor.putBoolean("KEY_HIGHLIGHT", isChecked);
+                break;
+
+            case R.id.enable_animation_switch:
+                preferencesEditor.putBoolean("KEY_ANIMATION", isChecked);
+                break;
+        }
     }
 }

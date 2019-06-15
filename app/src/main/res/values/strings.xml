@@ -8,6 +8,7 @@
         <item>English</item>
     </string-array>
     <string name="highlight_codons">Выделять кодоны цветом</string>
+    <string name="enable_animation">Включить анимацию</string>
     <string name="results_updated">Изменения будут применены при вводе нового кодона</string>
 
     <string name="adenine_uracil_complimentary">Аденин комплементарен урацилу</string>
