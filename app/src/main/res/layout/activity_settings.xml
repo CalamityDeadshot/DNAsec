@@ -43,11 +43,21 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="0dp"
             android:checked="true"
             android:padding="8dp"
             android:text="@string/enable_animation"
             android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/enable_animation_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:paddingEnd="64dp"
+            android:paddingStart="0dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/enable_animation_desc" />
 
         <View
             android:id="@+id/divider17"

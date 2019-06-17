@@ -1,10 +1,15 @@
 package com.app.dnasec;
 
+import android.animation.ArgbEvaluator;
 import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -12,21 +17,26 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
+import android.text.style.ClickableSpan;
 import android.transition.TransitionManager;
+import android.util.Property;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.app.dnasec.helpers.MutableBackgroundColorSpan;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
@@ -47,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final int ID_DNA = 0;
     final int ID_mRNA = 1;
     final int ID_tRNA = 2;
+    final boolean ERASED = true;
 
     String ADENINE;
     String GUANINE;
@@ -99,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         leucine = getResources().getString(R.string.leucine_shortened);
         isoleucine = getResources().getString(R.string.isoleucine_shortened);
         methionine = getResources().getString(R.string.methionine_shortened);
-        valine = getResources().getString(R.string.phenylalanine_shortened);
+        valine = getResources().getString(R.string.valine_shortened);
         serine = getResources().getString(R.string.serine_shortened);
         proline = getResources().getString(R.string.proline_shortened);
         threonine = getResources().getString(R.string.threonine_shortened);
@@ -131,6 +142,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         explanation = findViewById(R.id.explanation);
         DnaIsMatrix = findViewById(R.id.DNA_is_matrix);
 
+        sequence.setMovementMethod(LinkMovementMethod.getInstance());
+
         findViewById(R.id.A).setOnClickListener(this);
         findViewById(R.id.T).setOnClickListener(this);
         findViewById(R.id.G).setOnClickListener(this);
@@ -156,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (sequence.getText().length() > 0) {
                     if (sequence.getText().toString().length() % 3 == 0) {
                         if (codonsAreHighlighted) {
-                            color(sequence);
+                            color(sequence, ERASED);
                         }
 
                         String[] solvedArr;
@@ -171,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         thirdResult.setText(solvedArr[2]);
 
                         if (codonsAreHighlighted) {
-                            color(firstResult);
+                            color(firstResult, ERASED);
                         }
 
                         explanation.setEnabled(true);
@@ -245,10 +258,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         thirdResultHeading.setText(savedInstanceState.getString("thirdResultHeading"));
         thirdResult.setText(savedInstanceState.getString("thirdResult"));
         if (codonsAreHighlighted) {
-            color(sequence);
-            color(firstResult);
+            color(sequence, ERASED);
+            color(firstResult, ERASED);
             if (spinner.getSelectedItem().toString().equals("тРНК")) {
-                color(secondResult);
+                color(secondResult, ERASED);
             }
         }
         if (sequence.getText().length() % 3 == 0 && sequence.getText().length() != 0) {
@@ -278,14 +291,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.clear_button:
                 clearFields();
-                System.out.println(animationIsEnabled);
                 break;
             case R.id.erase_button:
                 if (sequence.getText().toString().length() > 0) {
                     sequence.setText(sequence.getText().toString().substring(0, sequence.getText().toString().length() - 1));
                     if (codonsAreHighlighted) {
-                        color(sequence);
-                        color(firstResult);
+                        color(sequence, ERASED);
+                        color(firstResult, ERASED);
 //                        if (DnaIsMatrix.isChecked()) {
 //                            color(secondResult);
 //                        }
@@ -296,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 if (sequence.getText().length() % 3 == 0 && sequence.getText().length() != 0) {
                     if (codonsAreHighlighted) {
-                        color(firstResult);
+                        color(firstResult, false);
 //                        if (DnaIsMatrix.isChecked()) {
 //                            color(secondResult);
 //                        }
@@ -307,9 +319,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else if (sequence.getText().length() % 3 != 0){
                     beforeEnteringText.setText(getResources().getString(R.string.incomlete_sequence));
                     explanation.setEnabled(false);
-                    if (codonsAreHighlighted) {
-                        color(firstResult);
-                    }
+//                    if (codonsAreHighlighted) {
+//                        color(firstResult);
+//                    }
                 }
                 if (sequence.getText().length() < 3) {
                     firstResult.setText("");
@@ -332,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             thirdResult.setText(solvedArr[2]);
 
                             if (codonsAreHighlighted) {
-                                color(firstResult);
+                                color(firstResult, ERASED);
                             }
                         } else if (sequence.getText().length() % 2 != 0 && sequence.getText().length() % 3 != 0) {
                             try {
@@ -350,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             String[] solvedArr = solveForIRNA();
                             firstResult.setText(String.format("-%s-", solvedArr[0]));
                             if (codonsAreHighlighted) {
-                                color(firstResult);
+                                color(firstResult, ERASED);
                             }
                             secondResult.setText(solvedArr[1]);
                             thirdResult.setText(solvedArr[2]);
@@ -371,8 +383,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             firstResult.setText(String.format("-%s-", solvedArr[0]));
                             secondResult.setText(String.format("-%s-", solvedArr[1]));
                             if (codonsAreHighlighted) {
-                                color(firstResult);
-                                color(secondResult);
+                                color(firstResult, ERASED);
+                                color(secondResult, ERASED);
                             }
                             thirdResult.setText(solvedArr[2]);
                         } else if (sequence.getText().length() % 2 != 0 && sequence.getText().length() % 3 != 0) {
@@ -408,16 +420,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
         if (v.getId() == R.id.A || v.getId() == R.id.T || v.getId() == R.id.G || v.getId() == R.id.C) {
-            if (codonsAreHighlighted) {
-                color(sequence);
-                color(firstResult);
-            }
+
             beforeEnteringText.setText("");
             switch ((int)spinner.getSelectedItemId()) {
                 case ID_DNA:
                     if (sequence.getText().toString().length() % 3 == 0) {
                         if (codonsAreHighlighted) {
-                            color(sequence);
+                            color(sequence, false);
                         }
 
                         String[] solvedArr;
@@ -432,7 +441,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         thirdResult.setText(solvedArr[2]);
 
                         if (codonsAreHighlighted) {
-                            color(firstResult);
+                            color(firstResult, false);
 //                            if (DnaIsMatrix.isChecked()) {
 //                                color(secondResult);
 //                            }
@@ -450,13 +459,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case ID_mRNA:
                     if (sequence.getText().toString().length() % 3 == 0) {
                         if (codonsAreHighlighted) {
-                            color(sequence);
+                            color(sequence, false);
                         }
 
                         String[] solvedArr = solveForIRNA();
                         firstResult.setText(String.format("-%s-", solvedArr[0]));
                         if (codonsAreHighlighted) {
-                            color(firstResult);
+                            color(firstResult, false);
                         }
                         secondResult.setText(solvedArr[1]);
                         thirdResult.setText(solvedArr[2]);
@@ -476,9 +485,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         secondResult.setText(String.format("-%s-", solvedArr[1]));
 
                         if (codonsAreHighlighted) {
-                            color(sequence);
-                            color(firstResult);
-                            color(secondResult);
+                            color(sequence, false);
+                            color(firstResult, false);
+                            color(secondResult, false);
                         }
                         thirdResult.setText(solvedArr[2]);
                         explanation.setEnabled(true);
@@ -923,34 +932,77 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    void color(TextView textView) {
+    private static final Property<MutableBackgroundColorSpan, Integer> MUTABLE_BACKGROUND_COLOR_SPAN_FC_PROPERTY =
+            new Property<MutableBackgroundColorSpan, Integer>(Integer.class, "MUTABLE_BACKGROUND_COLOR_SPAN_FC_PROPERTY") {
+
+                @Override
+                public void set(MutableBackgroundColorSpan span, Integer value) {
+                    span.setBackgroundColor(value);
+                }
+
+                @Override
+                public Integer get(MutableBackgroundColorSpan span) {
+                    return span.getBackgroundColor();
+                }
+            };
+
+    void color(final TextView textView, boolean erased) {
         String sequenceColored = textView.getText().toString();
-        SpannableString ss = new SpannableString(sequenceColored);
+        final SpannableString ss = new SpannableString(sequenceColored);
         int iter = 0;
         try {
             if (textView.getId() == R.id.sequence) {
                 for (int i = 0; i < sequenceColored.length(); i += 3, iter++) {
                     if (iter == 0) {
-                        ss.setSpan(new BackgroundColorSpan(Color.argb(123, 255, 136, 0)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                        if (animationIsEnabled && !(i < textView.getText().length() - 3) && !erased) {
+                            colorWithAnimation(ss, i, textView, 255, 136, 0);
+                        } else ss.setSpan(new BackgroundColorSpan(Color.argb(123, 255, 136, 0)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                        // Будущие обновления...
+                        /*ClickableSpan clickableSpan = new ClickableSpan() {
+                            @Override
+                            public void onClick(@NonNull View widget) {
+                                Toast.makeText(MainActivity.this, "You clicked a span bruh", Toast.LENGTH_SHORT).show();
+                            }
+                        };
+                        ss.setSpan(clickableSpan, i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);*/
+
+
+
                     } else if (iter == 1) {
-                        ss.setSpan(new BackgroundColorSpan(Color.argb(123, 255, 187, 51)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        if (animationIsEnabled && !(i < textView.getText().length() - 3) && !erased) {
+                            colorWithAnimation(ss, i, textView, 255, 187, 51);
+                        } else ss.setSpan(new BackgroundColorSpan(Color.argb(123, 255, 187, 51)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     } else if (iter == 2) {
-                        ss.setSpan(new BackgroundColorSpan(Color.argb(123, 0, 153, 204)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        if (animationIsEnabled && !(i < textView.getText().length() - 3) && !erased) {
+                            colorWithAnimation(ss, i, textView, 0, 153, 204);
+                        } else ss.setSpan(new BackgroundColorSpan(Color.argb(123, 0, 153, 204)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     } else if (iter == 3) {
-                        ss.setSpan(new BackgroundColorSpan(Color.argb(123, 170, 102, 204)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        if (animationIsEnabled && !(i < textView.getText().length() - 3) && !erased) {
+                            colorWithAnimation(ss, i, textView, 170, 102, 204);
+                        } else ss.setSpan(new BackgroundColorSpan(Color.argb(123, 170, 102, 204)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         iter = -1;
                     }
                 }
             } else {
                 for (int i = 1; i < sequenceColored.length() - 1; i+=3, iter++) {
                     if (iter == 0) {
-                        ss.setSpan(new BackgroundColorSpan(Color.argb(123, 255, 136, 0)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        if (animationIsEnabled && !(i < textView.getText().length() - 4) && !erased) {
+                            colorWithAnimation(ss, i, textView, 255, 136, 0);
+                        } else ss.setSpan(new BackgroundColorSpan(Color.argb(123, 255, 136, 0)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     } else if (iter == 1) {
-                        ss.setSpan(new BackgroundColorSpan(Color.argb(123, 255,187,51)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        if (animationIsEnabled && !(i < textView.getText().length() - 4) && !erased) {
+                            colorWithAnimation(ss, i, textView, 255, 187, 51);
+                        } else ss.setSpan(new BackgroundColorSpan(Color.argb(123, 255,187,51)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     } else if (iter == 2) {
-                        ss.setSpan(new BackgroundColorSpan(Color.argb(123, 0,153,204)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        if (animationIsEnabled && !(i < textView.getText().length() - 4) && !erased) {
+                            colorWithAnimation(ss, i, textView, 0, 153, 204);
+                        } else ss.setSpan(new BackgroundColorSpan(Color.argb(123, 0,153,204)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     } else if (iter == 3) {
-                        ss.setSpan(new BackgroundColorSpan(Color.argb(123, 170,102,204)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        if (animationIsEnabled && !(i < textView.getText().length() - 4) && !erased) {
+                            colorWithAnimation(ss, i, textView, 170, 102, 204);
+                        } else ss.setSpan(new BackgroundColorSpan(Color.argb(123, 170,102,204)), i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         iter = -1;
                     }
                 }
@@ -959,6 +1011,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             textView.setText(ss);
         }
         textView.setText(ss);
+    }
+
+    void colorWithAnimation(final SpannableString ss, int i, final TextView textView, int r, int g, int b) {
+        MutableBackgroundColorSpan span = new MutableBackgroundColorSpan(123, Color.GREEN);
+        ss.setSpan(span,  i, i + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ObjectAnimator objectAnimator = ObjectAnimator.ofInt(span, MUTABLE_BACKGROUND_COLOR_SPAN_FC_PROPERTY, Color.WHITE, Color.rgb(r, g, b));
+        objectAnimator.setDuration(100);
+        objectAnimator.setEvaluator(new ArgbEvaluator());
+        objectAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                //refresh
+                textView.setText(ss);
+            }
+        });
+        objectAnimator.start();
     }
 
     void clearFields() {

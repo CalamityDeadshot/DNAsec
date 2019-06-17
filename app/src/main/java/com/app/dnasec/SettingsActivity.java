@@ -8,11 +8,15 @@ import androidx.appcompat.widget.SwitchCompat;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
 
-public class SettingsActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
+public class SettingsActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
     SharedPreferences.Editor preferencesEditor;
+
+    SwitchCompat highlightCodonsSwitch;
+    SwitchCompat enableAnimationSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +27,8 @@ public class SettingsActivity extends AppCompatActivity implements CompoundButto
 
 
 
-        SwitchCompat highlightCodonsSwitch = findViewById(R.id.highlight_codons_switch);
-        SwitchCompat enableAnimationSwitch = findViewById(R.id.enable_animation_switch);
+        highlightCodonsSwitch = findViewById(R.id.highlight_codons_switch);
+        enableAnimationSwitch = findViewById(R.id.enable_animation_switch);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferencesEditor = preferences.edit();
@@ -35,6 +39,7 @@ public class SettingsActivity extends AppCompatActivity implements CompoundButto
         enableAnimationSwitch.setOnCheckedChangeListener(this);
 
 
+        findViewById(R.id.enable_animation_desc).setOnClickListener(this);
     }
 
     @Override
@@ -66,6 +71,15 @@ public class SettingsActivity extends AppCompatActivity implements CompoundButto
             case R.id.enable_animation_switch:
                 preferencesEditor.putBoolean("KEY_ANIMATION", isChecked);
                 break;
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.enable_animation_desc:
+                enableAnimationSwitch.performClick();
+
         }
     }
 }

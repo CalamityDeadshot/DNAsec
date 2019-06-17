@@ -87,4 +87,5 @@
     <string name="glycine">Glycine</string>
     <string name="genome_table">Genetic code table</string>
     <string name="enable_animation">Enable animation</string>
+    <string name="enable_animation_desc">Disabling animation can increase performance on slower devices</string>
 </resources>
