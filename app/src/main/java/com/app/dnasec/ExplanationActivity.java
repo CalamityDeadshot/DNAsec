@@ -28,6 +28,7 @@ import com.github.florent37.expansionpanel.ExpansionLayout;
 import com.tooltip.Tooltip;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class ExplanationActivity extends AppCompatActivity {
@@ -118,11 +119,12 @@ public class ExplanationActivity extends AppCompatActivity {
             ArrayList<PairModel> pairs2 = new ArrayList<>();
             ArrayList<CodonAminoacidPairModel> pairs3 = new ArrayList<>();
 
-            String[] sequenceNucleotidesPre = mainSequence.split("");
+            String[] sequenceNucleotidesPre = mainSequence.split(""); // [, A, T, G]
             String[] sequenceNucleotides = new String[sequenceNucleotidesPre.length - 1];
             if (sequenceNucleotidesPre.length - 1 >= 0)
                 System.arraycopy(sequenceNucleotidesPre, 1, sequenceNucleotides, 0, sequenceNucleotidesPre.length - 1);
             String[] firstResultNucleotidesPre = firstResult.split("");
+//            System.out.println(Arrays.toString(firstResultNucleotidesPre));
             String[] firstResultNucleotides = new String[firstResultNucleotidesPre.length - 1];
             if (sequenceNucleotidesPre.length - 1 >= 0)
                 System.arraycopy(firstResultNucleotidesPre, 1, firstResultNucleotides, 0, sequenceNucleotidesPre.length - 1);
@@ -396,13 +398,7 @@ public class ExplanationActivity extends AppCompatActivity {
     }
 
     private String[] parseAminoacid() {
-        String[] aminoacidPre = thirdResult.split("-");
-        String[] aminoacid = new String[aminoacidPre.length - 1];
-
-        if (aminoacidPre.length - 1 >= 0)
-            System.arraycopy(aminoacidPre, 1, aminoacid, 0, aminoacidPre.length - 1);
-
-        return aminoacid;
+        return thirdResult.split("-");
     }
 
 }
