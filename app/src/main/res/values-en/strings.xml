@@ -28,6 +28,7 @@
     <string name="clear">Clear all</string>
     <string name="erase">Erase</string>
     <string name="explanation">Explanation</string>
+
     <string name="isoleucine_shortened">Ile</string>
     <string name="leucine_shortened">Leu</string>
     <string name="methionine_shortened">Met</string>
@@ -49,6 +50,7 @@
     <string name="arginine_shortened">Arg</string>
     <string name="glycine_shortened">Gly</string>
     <string name="tryptophan_shortened">Trp</string>
+
     <string name="settings">Settings</string>
     <string name="language">Language</string>
     <string name="highlight_codons">Highlight codons</string>

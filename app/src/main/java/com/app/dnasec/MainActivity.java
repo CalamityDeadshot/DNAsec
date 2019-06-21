@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -35,7 +34,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.app.dnasec.helpers.MutableBackgroundColorSpan;
-import com.app.dnasec.helpers.MutableClickableSpan;
 
 import java.util.Arrays;
 
@@ -275,6 +273,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DnaIsMatrix.setChecked(savedInstanceState.getBoolean("DnaIsMatrix"));
     }
 
+    boolean isPrime(int n) {
+        //check if n is a multiple of 2
+        if (n%2==0) return false;
+        //if not, then just check the odds
+        for(int i=3;i*i<=n;i+=2) {
+            if(n%i==0)
+                return false;
+        }
+        return true;
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -342,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if (codonsAreHighlighted) {
                                 color(firstResult, ERASED);
                             }
-                        } else if (sequence.getText().length() % 2 != 0 && sequence.getText().length() % 3 != 0) {
+                        } else if (!isPrime(sequence.getText().length()) && sequence.getText().length() % 3 != 0) {
                             try {
                                 firstResult.setText(firstResult.getText().toString().substring(0, firstResult.getText().length() - 3));
                                 secondResult.setText(secondResult.getText().toString().substring(0, secondResult.getText().length() - 5));
@@ -438,7 +447,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         firstResult.append(optimizedSolved[0]);
                         secondResult.append(optimizedSolved[1]);
                         thirdResult.append(optimizedSolved[2]);
-//                        thirdResult.append("-");
 
                         if (codonsAreHighlighted) {
                             color(firstResult, false);
