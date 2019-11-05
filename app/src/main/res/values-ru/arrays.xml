@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="inputData">
-        <item>DNA</item>
-        <item>mRNA</item>
-        <item>tRNA</item>
+        <item>ДНК</item>
+        <item>иРНК</item>
+        <item>тРНК</item>
     </string-array>
 </resources>
