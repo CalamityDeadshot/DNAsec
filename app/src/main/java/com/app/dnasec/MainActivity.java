@@ -4,9 +4,13 @@ import android.animation.ArgbEvaluator;
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.Nullable;
@@ -32,10 +36,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.dnasec.helpers.MutableBackgroundColorSpan;
+import com.app.dnasec.helpers.Solver;
 
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
@@ -64,27 +69,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String URACIL;
     String THYMINE;
 
-    String phenylalanine;
-    String leucine;
-    String isoleucine;
-    String methionine;
-    String valine;
-    String serine;
-    String proline;
-    String threonine;
-    String tyrosine;
-    String alanine;
-    String stop;
-    String histidine;
-    String glutamine;
-    String asparagine;
-    String lysine;
-    String aspartic_acid;
-    String glutamine_acid;
-    String cysteine;
-    String tryptophan;
-    String arginine;
-    String glycine;
 
     private boolean codonsAreHighlighted;
     private boolean animationIsEnabled;
@@ -95,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-
+        Solver.init(this);
         codonsAreHighlighted = preferences.getBoolean("KEY_HIGHLIGHT", true);
         animationIsEnabled = preferences.getBoolean("KEY_ANIMATION", true);
 
@@ -104,28 +88,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         CYTOSINE = getResources().getString(R.string.cytosine);
         URACIL = getResources().getString(R.string.uracil);
         THYMINE = getResources().getString(R.string.thymine);
-
-        phenylalanine = getResources().getString(R.string.phenylalanine_shortened);
-        leucine = getResources().getString(R.string.leucine_shortened);
-        isoleucine = getResources().getString(R.string.isoleucine_shortened);
-        methionine = getResources().getString(R.string.methionine_shortened);
-        valine = getResources().getString(R.string.valine_shortened);
-        serine = getResources().getString(R.string.serine_shortened);
-        proline = getResources().getString(R.string.proline_shortened);
-        threonine = getResources().getString(R.string.threonine_shortened);
-        tyrosine = getResources().getString(R.string.tyrosine_shortened);
-        alanine = getResources().getString(R.string.alanine_shortened);
-        stop = getResources().getString(R.string.stop_shortened);
-        histidine = getResources().getString(R.string.histidine_shortened);
-        glutamine = getResources().getString(R.string.glutamine_shortened);
-        asparagine = getResources().getString(R.string.asparagine_shortened);
-        lysine = getResources().getString(R.string.lysine_shortened);
-        aspartic_acid = getResources().getString(R.string.aspartic_acid_shortened);
-        glutamine_acid = getResources().getString(R.string.glutamine_acid_shortened);
-        cysteine = getResources().getString(R.string.cysteine_shortened);
-        tryptophan = getResources().getString(R.string.tryptophan_shortened);
-        arginine = getResources().getString(R.string.arginine_shortened);
-        glycine = getResources().getString(R.string.glycine_shortened);
 
         spinnerInteractionIsAllowed = false;
 
@@ -173,9 +135,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         String[] solvedArr;
                         if (DnaIsMatrix.isChecked()) {
-                            solvedArr = solveForMatrixDNA();
+                            solvedArr = Solver.solveForMatrixDNA(sequence.getText().toString());
                         } else {
-                            solvedArr = solveForDNA();
+                            solvedArr = Solver.solveForDNA(sequence.getText().toString());
                         }
 
                         if (animationIsEnabled) {
@@ -194,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
                     } else {
+                        Toast.makeText(MainActivity.this, getResources().getString(R.string.incomlete_sequence), Toast.LENGTH_LONG).show();
+                        vibrate();
+                        DnaIsMatrix.setChecked(!DnaIsMatrix.isChecked());
                         beforeEnteringText.setText(getResources().getString(R.string.incomlete_sequence));
                         explanation.setEnabled(false);
                     }
@@ -208,7 +173,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
-
+    private void vibrate() {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createWaveform(new long[] {200, 200}, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            v.vibrate(200);
+        }
+    }
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.actionbar_menu, menu);
         return true;
@@ -263,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (codonsAreHighlighted) {
             color(sequence, ERASED);
             color(firstResult, ERASED);
-            if (spinner.getSelectedItem().toString().equals("тРНК")) {
+            if (spinner.getSelectedItem().toString().equals(getResources().getString(R.string.tRNA))) {
                 color(secondResult, ERASED);
             }
         }
@@ -307,103 +279,115 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 clearFields();
                 break;
             case R.id.erase_button:
-                if (sequence.getText().toString().length() > 0) {
-                    sequence.setText(sequence.getText().toString().substring(0, sequence.getText().toString().length() - 1));
+                String text = sequence.getText().toString();
+                if (text.length() > 0) {
+                    sequence.setText(text.substring(0, text.length() - 1));
+                    text = sequence.getText().toString();
                     if (codonsAreHighlighted) {
                         color(sequence, ERASED);
                         color(firstResult, ERASED);
                     }
                 }
-                if (sequence.getText().length() == 0) {
+                if (text.length() == 0) {
                     clearFields();
                 }
-                if (sequence.getText().length() % 3 == 0 && sequence.getText().length() != 0) {
+                boolean validText = text.length() % 3 == 0 && text.length() != 0;
+                if (validText) {
                     if (codonsAreHighlighted) {
                         color(firstResult, false);
                     }
                     beforeEnteringText.setText("");
                     explanation.setEnabled(true);
 
-                } else if (sequence.getText().length() % 3 != 0){
+                } else if (text.length() % 3 != 0){
                     beforeEnteringText.setText(getResources().getString(R.string.incomlete_sequence));
                     explanation.setEnabled(false);
                 }
-                if (sequence.getText().length() < 3) {
+                if (text.length() < 3) {
                     firstResult.setText("");
                     secondResult.setText("");
                     thirdResult.setText("");
+                    return;
                 }
+                try {
+                    String firstResultText = firstResult.getText().toString();
+                    String secondResultText = secondResult.getText().toString();
+                    String thirdResultText = thirdResult.getText().toString();
+                    String firstSubstring = firstResultText.substring(0, firstResultText.length() - 3);
+                    String secondSubstring = secondResultText.substring(0, secondResultText.length() - 5);
+                    String thirdSubstring = thirdResultText.substring(0, thirdResultText.length() - 4);
+                    boolean resultErasingCondition = text.length() % 3 != 0 && (text.length() - 1) % 3 != 0;
+                    switch ((int) spinner.getSelectedItemId()) {
+                        case ID_DNA:
+                            if (validText) {
+                                String[] solvedArr;
+                                if (DnaIsMatrix.isChecked()) {
+                                    solvedArr = Solver.solveForMatrixDNA(text);
+                                } else {
+                                    solvedArr = Solver.solveForDNA(text);
+                                }
 
-                switch ((int)spinner.getSelectedItemId()) {
-                    case ID_DNA:
-                        if (sequence.getText().length() % 3 == 0 && sequence.getText().length() != 0) {
-                            String[] solvedArr;
-                            if (DnaIsMatrix.isChecked()) {
-                                solvedArr = solveForMatrixDNA();
-                            } else {
-                                solvedArr = solveForDNA();
-                            }
+                                firstResult.setText(solvedArr[0]);
+                                secondResult.setText(solvedArr[1]);
+                                thirdResult.setText(solvedArr[2]);
 
-                            firstResult.setText(solvedArr[0]);
-                            secondResult.setText(solvedArr[1]);
-                            thirdResult.setText(solvedArr[2]);
+                                if (codonsAreHighlighted) {
+                                    color(firstResult, ERASED);
+                                }
+                            } else if (resultErasingCondition) {
+                                try {
+                                    firstResult.setText(firstSubstring);
+                                    secondResult.setText(secondSubstring);
+                                    thirdResult.setText(thirdSubstring);
+                                } catch (StringIndexOutOfBoundsException e) {
+                                    firstResult.setText("");
+                                }
+                            }
+                            break;
 
-                            if (codonsAreHighlighted) {
-                                color(firstResult, ERASED);
+                        case ID_mRNA:
+                            if (validText) {
+                                String[] solvedArr = Solver.solveForMRNA(text);
+                                firstResult.setText(solvedArr[0]);
+                                if (codonsAreHighlighted) {
+                                    color(firstResult, ERASED);
+                                }
+                                secondResult.setText(solvedArr[1]);
+                                thirdResult.setText(solvedArr[2]);
+                            } else if (resultErasingCondition) {
+                                try {
+                                    firstResult.setText(firstSubstring);
+                                    secondResult.setText(secondSubstring);
+                                    thirdResult.setText(thirdSubstring);
+                                } catch (StringIndexOutOfBoundsException e) {
+                                    firstResult.setText("");
+                                }
                             }
-                        } else if (!isPrime(sequence.getText().length()) && sequence.getText().length() % 3 != 0) {
-                            try {
-                                firstResult.setText(firstResult.getText().toString().substring(0, firstResult.getText().length() - 3));
-                                secondResult.setText(secondResult.getText().toString().substring(0, secondResult.getText().length() - 5));
-                                thirdResult.setText(thirdResult.getText().toString().substring(0, thirdResult.getText().length() - 4));
-                            } catch (StringIndexOutOfBoundsException e) {
-                                firstResult.setText("");
-                            }
-                        }
-                        break;
+                            break;
 
-                    case ID_mRNA:
-                        if (sequence.getText().length() % 3 == 0 && sequence.getText().length() != 0) {
-                            String[] solvedArr = solveForMRNA();
-                            firstResult.setText(solvedArr[0]);
-                            if (codonsAreHighlighted) {
-                                color(firstResult, ERASED);
-                            }
-                            secondResult.setText(solvedArr[1]);
-                            thirdResult.setText(solvedArr[2]);
-                        } else if (sequence.getText().toString().length() % 2 != 0 && sequence.getText().toString().length() % 3 != 0) {
-                            try {
-                                firstResult.setText(firstResult.getText().toString().substring(0, firstResult.getText().length() - 3));
-                                secondResult.setText(secondResult.getText().toString().substring(0, secondResult.getText().length() - 5));
-                                thirdResult.setText(thirdResult.getText().toString().substring(0, thirdResult.getText().length() - 4));
-                            } catch (StringIndexOutOfBoundsException e) {
-                                firstResult.setText("");
-                            }
-                        }
-                        break;
-
-                    case ID_tRNA:
-                        if (sequence.getText().length() % 3 == 0 && sequence.getText().length() != 0) {
-                            String[] solvedArr = solveForTRNA();
-                            firstResult.setText(solvedArr[0]);
-                            secondResult.setText(solvedArr[1]);
-                            if (codonsAreHighlighted) {
-                                color(firstResult, ERASED);
-                                color(secondResult, ERASED);
-                            }
-                            thirdResult.setText(solvedArr[2]);
-                        } else if (sequence.getText().length() % 2 != 0 && sequence.getText().length() % 3 != 0) {
-                            try {
-                                firstResult.setText( firstResult.getText().toString().substring(0, firstResult.getText().length() - 3));
-                                secondResult.setText( secondResult.getText().toString().substring(0, secondResult.getText().length() - 3));
-                                thirdResult.setText(thirdResult.getText().toString().substring(0, thirdResult.getText().length() - 4));
-                            } catch (StringIndexOutOfBoundsException e) {
+                        case ID_tRNA:
+                            if (validText) {
+                                String[] solvedArr = Solver.solveForTRNA(sequence.getText().toString());
+                                firstResult.setText(solvedArr[0]);
+                                secondResult.setText(solvedArr[1]);
+                                if (codonsAreHighlighted) {
+                                    color(firstResult, ERASED);
+                                    color(secondResult, ERASED);
+                                }
+                                thirdResult.setText(solvedArr[2]);
+                            } else if (resultErasingCondition) {
+                                try {
+                                    firstResult.setText(firstSubstring);
+                                    secondResult.setText(secondResultText.substring(0, secondResultText.length() - 3));
+                                    thirdResult.setText(thirdSubstring);
+                                } catch (StringIndexOutOfBoundsException e) {
 //                                firstResult.setText("-");
+                                }
                             }
-                        }
-                        break;
+                            break;
 
-                }
+                    }
+                } catch (Exception e) {}
                 break;
 
             case R.id.explanation:
@@ -438,10 +422,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         String[] optimizedSolved;
                         if (DnaIsMatrix.isChecked()) {
-                            optimizedSolved = solveLastCodonMatrixDNA();
+                            optimizedSolved = Solver.solveLastCodonMatrixDNA(sequence.getText().toString());
 
                         } else {
-                            optimizedSolved = solveLastCodonDNA();
+                            optimizedSolved = Solver.solveLastCodonDNA(sequence.getText().toString());
                         }
 
                         firstResult.append(optimizedSolved[0]);
@@ -472,7 +456,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                        secondResult.setText(solvedArr[1]);
 //                        thirdResult.setText(solvedArr[2]);
 
-                        String[] optimizedSolved = solveLastCodonMRNA();
+                        String[] optimizedSolved = Solver.solveLastCodonMRNA(sequence.getText().toString());
                         firstResult.append(optimizedSolved[0]);
                         secondResult.append(optimizedSolved[1]);
                         thirdResult.append(optimizedSolved[2]);
@@ -489,7 +473,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case ID_tRNA:
                     if (sequence.getText().length() % 3 == 0) {
 
-                        String[] optimizedSolved = solveLastCodonTRNA();
+                        String[] optimizedSolved = Solver.solveLastCodonTRNA(sequence.getText().toString());
                         firstResult.append(optimizedSolved[0]);
 
                         secondResult.append(optimizedSolved[1]);
@@ -555,629 +539,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-
-
-    public String[] solveLastCodonDNA() { // Оптимизированный под последний кодон метод
-
-        String sequenceString = sequence.getText().toString();
-
-        String lastCodon = sequenceString.substring(sequenceString.length() - 3); // Последний ДНК-кодон
-        String[] lastCodonNucleotidesPre = lastCodon.split("");
-
-        String[] lastCodonNucleotides = new String[lastCodonNucleotidesPre.length - 1]; // Последний ДНК-кодон по нуклеотидам
-        System.arraycopy(lastCodonNucleotidesPre, 1, lastCodonNucleotides, 0, lastCodonNucleotides.length);
-
-        System.out.println(Arrays.toString(lastCodonNucleotides));
-
-        String[] lastMRnaNucleotides = new String[3];
-        String[] lastTRnaNucleotides = new String[3];
-
-        for (int i = 0; i < 3; i++) {
-            if (lastCodonNucleotides[i].equals(ADENINE)) {
-                lastMRnaNucleotides[i] = URACIL;
-                lastTRnaNucleotides[i] = ADENINE;
-            } else if (lastCodonNucleotides[i].equals(THYMINE)) {
-                lastMRnaNucleotides[i] = ADENINE;
-                lastTRnaNucleotides[i] = URACIL;
-            } else if (lastCodonNucleotides[i].equals(GUANINE)) {
-                lastMRnaNucleotides[i] = CYTOSINE;
-                lastTRnaNucleotides[i] = GUANINE;
-            } else if (lastCodonNucleotides[i].equals(CYTOSINE)) {
-                lastMRnaNucleotides[i] = GUANINE;
-                lastTRnaNucleotides[i] = CYTOSINE;
-            }
-        }
-
-        StringBuilder lastMRNA = new StringBuilder();
-        StringBuilder lastTRNA = new StringBuilder();
-
-        for (String str : lastTRnaNucleotides) { // Перевод массива нклеотидов в строку
-            lastTRNA.append(str);
-        }
-
-        for (String str : lastMRnaNucleotides) { // Перевод массива нклеотидов в строку
-            lastMRNA.append(str);
-        }
-        lastTRNA.append("; ");
-
-        String aminoAcid = handleAminoAcidLastCodon(lastMRNA.toString());
-
-        return new String[] {lastMRNA.toString(), lastTRNA.toString(), aminoAcid};
-    }
-
-    public String[] solveLastCodonMatrixDNA() { // Оптимизированный под последний кодон метод
-
-        String sequenceString = sequence.getText().toString();
-
-        String lastCodon = sequenceString.substring(sequenceString.length() - 3); // Последний ДНК-кодон
-        String[] lastCodonNucleotidesPre = lastCodon.split("");
-
-        String[] lastCodonNucleotides = new String[lastCodonNucleotidesPre.length - 1]; // Последний ДНК-кодон по нуклеотидам
-        System.arraycopy(lastCodonNucleotidesPre, 1, lastCodonNucleotides, 0, lastCodonNucleotides.length);
-
-        System.out.println(Arrays.toString(lastCodonNucleotides));
-
-        String[] lastMRnaNucleotides = new String[3];
-        String[] lastTRnaNucleotides = new String[3];
-
-        for (int i = 0; i < 3; i++) {
-            if (lastCodonNucleotides[i].equals(ADENINE)) {
-                lastMRnaNucleotides[i] = ADENINE;
-                lastTRnaNucleotides[i] = URACIL;
-            } else if (lastCodonNucleotides[i].equals(THYMINE)) {
-                lastMRnaNucleotides[i] = URACIL;
-                lastTRnaNucleotides[i] = ADENINE;
-            } else if (lastCodonNucleotides[i].equals(GUANINE)) {
-                lastMRnaNucleotides[i] = GUANINE;
-                lastTRnaNucleotides[i] = CYTOSINE;
-            } else if (lastCodonNucleotides[i].equals(CYTOSINE)) {
-                lastMRnaNucleotides[i] = CYTOSINE;
-                lastTRnaNucleotides[i] = GUANINE;
-            }
-        }
-
-        StringBuilder lastMRNA = new StringBuilder();
-        StringBuilder lastTRNA = new StringBuilder();
-
-        for (String str : lastTRnaNucleotides) { // Перевод массива нклеотидов в строку
-            lastTRNA.append(str);
-        }
-
-        for (String str : lastMRnaNucleotides) { // Перевод массива нклеотидов в строку
-            lastMRNA.append(str);
-        }
-        lastTRNA.append("; ");
-
-        String aminoAcid = handleAminoAcidLastCodon(lastMRNA.toString());
-
-        return new String[] {lastMRNA.toString(), lastTRNA.toString(), aminoAcid};
-    }
-
-    public String[] solveLastCodonMRNA() {
-        String sequenceString = sequence.getText().toString();
-
-        String lastCodon = sequenceString.substring(sequenceString.length() - 3); // Последний иРНК-кодон
-        String[] lastCodonNucleotidesPre = lastCodon.split("");
-
-        String[] lastCodonNucleotides = new String[lastCodonNucleotidesPre.length - 1]; // Последний иРНК-кодон по нуклеотидам
-        System.arraycopy(lastCodonNucleotidesPre, 1, lastCodonNucleotides, 0, lastCodonNucleotides.length);
-
-        System.out.println(Arrays.toString(lastCodonNucleotides));
-
-        String[] lastDnaNucleotides = new String[3];
-        String[] lastTRnaNucleotides = new String[3];
-
-        for (int i = 0; i < 3; i++) {
-            if (lastCodonNucleotides[i].equals(ADENINE)) {
-                lastDnaNucleotides[i] = THYMINE;
-                lastTRnaNucleotides[i] = URACIL;
-            } else if (lastCodonNucleotides[i].equals(URACIL)) {
-                lastDnaNucleotides[i] = ADENINE;
-                lastTRnaNucleotides[i] = ADENINE;
-            } else if (lastCodonNucleotides[i].equals(GUANINE)) {
-                lastDnaNucleotides[i] = GUANINE;
-                lastTRnaNucleotides[i] = CYTOSINE;
-            } else if (lastCodonNucleotides[i].equals(CYTOSINE)) {
-                lastDnaNucleotides[i] = GUANINE;
-                lastTRnaNucleotides[i] = GUANINE;
-            }
-        }
-
-        StringBuilder lastDNA = new StringBuilder();
-        StringBuilder lastTRNA = new StringBuilder();
-
-        for (String str : lastTRnaNucleotides) { // Перевод массива нклеотидов в строку
-            lastTRNA.append(str);
-        }
-
-        for (String str : lastDnaNucleotides) { // Перевод массива нклеотидов в строку
-            lastDNA.append(str);
-        }
-        lastTRNA.append("; ");
-
-        String aminoAcid = handleAminoAcidLastCodon(lastCodon);
-
-        return new String[] {lastDNA.toString(), lastTRNA.toString(), aminoAcid};
-    }
-
-    public String[] solveLastCodonTRNA() {
-        String sequenceString = sequence.getText().toString();
-
-        String lastCodon = sequenceString.substring(sequenceString.length() - 3); // Последний тРНК-кодон
-        String[] lastCodonNucleotidesPre = lastCodon.split("");
-
-        String[] lastCodonNucleotides = new String[lastCodonNucleotidesPre.length - 1]; // Последний тРНК-кодон по нуклеотидам
-        System.arraycopy(lastCodonNucleotidesPre, 1, lastCodonNucleotides, 0, lastCodonNucleotides.length);
-
-        System.out.println(Arrays.toString(lastCodonNucleotides));
-
-        String[] lastDnaNucleotides = new String[3];
-        String[] lastMRnaNucleotides = new String[3];
-
-        for (int i = 0; i < 3; i++) {
-            if (lastCodonNucleotides[i].equals(ADENINE)) {
-                lastDnaNucleotides[i] = ADENINE;
-                lastMRnaNucleotides[i] = URACIL;
-            } else if (lastCodonNucleotides[i].equals(URACIL)) {
-                lastDnaNucleotides[i] = THYMINE;
-                lastMRnaNucleotides[i] = ADENINE;
-            } else if (lastCodonNucleotides[i].equals(GUANINE)) {
-                lastDnaNucleotides[i] = GUANINE;
-                lastMRnaNucleotides[i] = CYTOSINE;
-            } else if (lastCodonNucleotides[i].equals(CYTOSINE)) {
-                lastDnaNucleotides[i] = CYTOSINE;
-                lastMRnaNucleotides[i] = GUANINE;
-            }
-        }
-
-        StringBuilder lastDNA = new StringBuilder();
-        StringBuilder lastMRNA = new StringBuilder();
-
-        for (String str : lastMRnaNucleotides) { // Перевод массива нклеотидов в строку
-            lastMRNA.append(str);
-        }
-
-        for (String str : lastDnaNucleotides) { // Перевод массива нклеотидов в строку
-            lastDNA.append(str);
-        }
-
-
-        String aminoAcid = handleAminoAcidLastCodon(lastMRNA.toString());
-
-        return new String[] {lastDNA.toString(), lastMRNA.toString(), aminoAcid};
-    }
-
-    String handleAminoAcidLastCodon(String lastMRNA) {
-
-        String aminoAcid = "";
-
-        if ((URACIL + URACIL + URACIL).equals(lastMRNA) || (URACIL + URACIL + CYTOSINE).equals(lastMRNA)) {
-            aminoAcid = phenylalanine;
-        } else if ((URACIL + URACIL + ADENINE).equals(lastMRNA) || (URACIL + URACIL + GUANINE).equals(lastMRNA) || (CYTOSINE + URACIL + URACIL).equals(lastMRNA) || (CYTOSINE + URACIL + CYTOSINE).equals(lastMRNA) || (CYTOSINE + URACIL + ADENINE).equals(lastMRNA) || (CYTOSINE + URACIL + GUANINE).equals(lastMRNA)) {
-            aminoAcid = leucine;
-        } else if ((URACIL + CYTOSINE + URACIL).equals(lastMRNA) || (URACIL + CYTOSINE + CYTOSINE).equals(lastMRNA) || (URACIL + CYTOSINE + ADENINE).equals(lastMRNA) || (URACIL + CYTOSINE + GUANINE).equals(lastMRNA) || (ADENINE + GUANINE + URACIL).equals(lastMRNA) || (ADENINE + GUANINE + CYTOSINE).equals(lastMRNA)) {
-            aminoAcid = serine;
-        } else if ((URACIL + ADENINE + URACIL).equals(lastMRNA) || (URACIL + ADENINE + CYTOSINE).equals(lastMRNA)) {
-            aminoAcid = tyrosine;
-        } else if ((URACIL + GUANINE + URACIL).equals(lastMRNA) || (URACIL + GUANINE + CYTOSINE).equals(lastMRNA)) {
-            aminoAcid = cysteine;
-        } else if ((URACIL + GUANINE + GUANINE).equals(lastMRNA)) {
-            aminoAcid = tryptophan;
-        } else if ((CYTOSINE + CYTOSINE + URACIL).equals(lastMRNA) || (CYTOSINE + CYTOSINE + CYTOSINE).equals(lastMRNA) || (CYTOSINE + CYTOSINE + ADENINE).equals(lastMRNA) || (CYTOSINE + CYTOSINE + GUANINE).equals(lastMRNA)) {
-            aminoAcid = proline;
-        } else if ((CYTOSINE + ADENINE + URACIL).equals(lastMRNA) || (CYTOSINE + ADENINE + CYTOSINE).equals(lastMRNA)) {
-            aminoAcid = histidine;
-        } else if ((CYTOSINE + GUANINE + URACIL).equals(lastMRNA) || (CYTOSINE + GUANINE + CYTOSINE).equals(lastMRNA) || (CYTOSINE + GUANINE + ADENINE).equals(lastMRNA) || (CYTOSINE + GUANINE + GUANINE).equals(lastMRNA) || (ADENINE + GUANINE + ADENINE).equals(lastMRNA) || (ADENINE + GUANINE + GUANINE).equals(lastMRNA)) {
-            aminoAcid = arginine;
-        } else if ((ADENINE + URACIL + URACIL).equals(lastMRNA) || (ADENINE + URACIL + CYTOSINE).equals(lastMRNA) || (ADENINE + URACIL + ADENINE).equals(lastMRNA)) {
-            aminoAcid = isoleucine;
-        } else if ((ADENINE + CYTOSINE + URACIL).equals(lastMRNA) || (ADENINE + CYTOSINE + CYTOSINE).equals(lastMRNA) || (ADENINE + CYTOSINE + ADENINE).equals(lastMRNA) || (ADENINE + CYTOSINE + GUANINE).equals(lastMRNA)) {
-            aminoAcid = threonine;
-        } else if ((ADENINE + ADENINE + URACIL).equals(lastMRNA) || (ADENINE + ADENINE + CYTOSINE).equals(lastMRNA)) {
-            aminoAcid = asparagine;
-        } else if ((ADENINE + URACIL + GUANINE).equals(lastMRNA)) {
-            aminoAcid = methionine;
-        } else if ((ADENINE + ADENINE + ADENINE).equals(lastMRNA) || (ADENINE + ADENINE + GUANINE).equals(lastMRNA)) {
-            aminoAcid = lysine;
-        } else if ((GUANINE + URACIL + URACIL).equals(lastMRNA) || (GUANINE + URACIL + CYTOSINE).equals(lastMRNA) || (GUANINE + URACIL + ADENINE).equals(lastMRNA) || (GUANINE + URACIL + GUANINE).equals(lastMRNA)) {
-            aminoAcid = valine;
-        } else if ((GUANINE + CYTOSINE + URACIL).equals(lastMRNA) || (GUANINE + CYTOSINE + CYTOSINE).equals(lastMRNA) || (GUANINE + CYTOSINE + ADENINE).equals(lastMRNA) || (GUANINE + CYTOSINE + GUANINE).equals(lastMRNA)) {
-            aminoAcid = alanine;
-        } else if ((GUANINE + ADENINE + URACIL).equals(lastMRNA) || (GUANINE + ADENINE + CYTOSINE).equals(lastMRNA)) {
-            aminoAcid = aspartic_acid;
-        } else if ((GUANINE + ADENINE + ADENINE).equals(lastMRNA) || (GUANINE + ADENINE + GUANINE).equals(lastMRNA)) {
-            aminoAcid = glutamine_acid;
-        } else if ((GUANINE + GUANINE + URACIL).equals(lastMRNA) || (GUANINE + GUANINE + CYTOSINE).equals(lastMRNA) || (GUANINE + GUANINE + ADENINE).equals(lastMRNA) || (GUANINE + GUANINE + GUANINE).equals(lastMRNA)) {
-            aminoAcid = glycine;
-        } else if ((URACIL + ADENINE + ADENINE).equals(lastMRNA) || (URACIL + ADENINE + GUANINE).equals(lastMRNA) || (URACIL + GUANINE + ADENINE).equals(lastMRNA)) {
-            aminoAcid = stop;
-        } else if ((CYTOSINE + ADENINE + ADENINE).equals(lastMRNA) || (CYTOSINE + ADENINE + GUANINE).equals(lastMRNA)) {
-            aminoAcid = glutamine;
-        }
-
-        return aminoAcid + "-";
-    }
-
-
-    public String[] solveForMatrixDNA() {
-
-        String codon;
-
-        String sequenceString = sequence.getText().toString();
-        String[] seqSplitted = sequenceString.split(""); // [, А, Т, Г]
-        String[] seqArr = new String[sequenceString.length()];
-        System.arraycopy(seqSplitted, 1, seqArr, 0, seqArr.length);
-
-        StringBuilder seq = new StringBuilder();
-        StringBuilder iRNA_codon = new StringBuilder();
-        StringBuilder tRNA_codon = new StringBuilder();
-        StringBuilder aminoacid = new StringBuilder();
-
-        for (String s : seqArr) {
-            seq.append(s);
-        }
-
-        String[] iRNAseqArr = new String[seqArr.length];
-        String[] AAseqArr = new String[seqArr.length / 3];
-        for (int i = 0; i < seq.length(); i += 3) {
-            codon = seq.substring(i, i + 3);
-            preSolveForMatrixDNA(i / 3, codon, iRNAseqArr, seqArr, AAseqArr);
-        }
-
-
-        for (String i :
-                iRNAseqArr) {
-            iRNA_codon.append(i);
-        }
-
-        for (int i = 1; i < seqArr.length + 1; i++) {
-            tRNA_codon.append(seqArr[i - 1]);
-            if (i % 3 == 0) {
-                tRNA_codon.append("; ");
-            }
-        }
-
-        for (String i :
-                AAseqArr) {
-            aminoacid.append(i).append("-");
-        }
-        return new String[] {iRNA_codon.toString(), tRNA_codon.toString(), aminoacid.toString()};
-    }
-
-    public void preSolveForMatrixDNA(int iter, String codon, String[] iRNAseqArr, String[] tRNAseqArr, String[] AAseqArr) {
-        String[] codonToArrPre = codon.split(""); // T, T, T
-        String[] codonToArr = new String[codon.length()];
-        System.arraycopy(codonToArrPre, 1, codonToArr, 0, codonToArr.length);
-
-        int j = iter * 3;
-        for (int i = 0; i < codon.length(); i++) {
-
-            if (codonToArr[i].equals(ADENINE)) {
-                tRNAseqArr[j + i] = URACIL;
-            } else if (codonToArr[i].equals(THYMINE)) {
-                tRNAseqArr[j + i] = ADENINE;
-            } else if (codonToArr[i].equals(GUANINE)) {
-                tRNAseqArr[j + i] = CYTOSINE;
-            } else if (codonToArr[i].equals(CYTOSINE)) {
-                tRNAseqArr[j + i] = GUANINE;
-            }
-
-        }
-
-        for (int i = 0; i < codon.length(); i++) {
-            if (codonToArr[i].equals(THYMINE)) {
-                iRNAseqArr[j + i] = URACIL;
-            } else if (codonToArr[i].equals(GUANINE)) {
-                iRNAseqArr[j + i] = GUANINE;
-            } else if (codonToArr[i].equals(CYTOSINE)) {
-                iRNAseqArr[j + i] = CYTOSINE;
-            } else if (codonToArr[i].equals(ADENINE)) {
-                iRNAseqArr[j + i] = ADENINE;
-            }
-        }
-        handleAminoAcid(iRNAseqArr, AAseqArr);
-    }
-
-    public String[] solveForDNA() {
-        String codon;
-
-        String sequenceString = sequence.getText().toString();
-
-        String[] seqSplitted = sequenceString.split(""); // [, A, T, G]
-        String[] seqArr = new String[sequenceString.length()];
-        System.arraycopy(seqSplitted, 1, seqArr, 0, seqArr.length); // [A, T, G]
-
-        StringBuilder seq = new StringBuilder();
-        StringBuilder iRNA_codon = new StringBuilder();
-        StringBuilder tRNA_codon = new StringBuilder();
-        StringBuilder aminoacid = new StringBuilder();
-
-        for (String s : seqArr) {
-            seq.append(s);
-        }
-
-        String[] iRNAseqArr = new String[seqArr.length];
-        String[] AAseqArr = new String[seqArr.length / 3];
-        for (int i = 0; i < seq.length(); i += 3) {
-            codon = seq.substring(i, i + 3);
-            preSolveForDNA(i / 3, codon, iRNAseqArr, seqArr, AAseqArr);
-        }
-
-
-        for (String i :
-                iRNAseqArr) {
-            iRNA_codon.append(i);
-        }
-
-        for (int i = 1; i < seqArr.length + 1; i++) {
-            tRNA_codon.append(seqArr[i - 1]);
-            if (i % 3 == 0) {
-                tRNA_codon.append("; ");
-            }
-        }
-
-        for (String i :
-                AAseqArr) {
-            aminoacid.append(i).append("-");
-        }
-        return new String[] {iRNA_codon.toString(), tRNA_codon.toString(), aminoacid.toString()};
-    }
-
-    public void preSolveForDNA(int iter, String codon, String[] iRNAseqArr, String[] tRNAseqArr, String[] AAseqArr) {
-        String[] codonToArrPre = codon.split(""); // T, T, T
-        String[] codonToArr = new String[codon.length()];
-        System.arraycopy(codonToArrPre, 1, codonToArr, 0, codonToArr.length);
-
-        int j = iter * 3;
-        handleIRNA(iter, codon, iRNAseqArr, codonToArr);
-
-        for (int i = 0; i < codon.length(); i++) {
-            if (codonToArr[i].equals(THYMINE)) {
-                tRNAseqArr[j + i] = URACIL;
-            }
-        }
-        handleAminoAcid(iRNAseqArr, AAseqArr);
-    }
-
-    public String[] solveForMRNA() {
-        String codon;
-
-        String sequenceString = sequence.getText().toString();
-        String[] seqSplitted = sequenceString.split(""); // [, А, Т, Г]
-
-        String[] seqArr = new String[sequenceString.length()];
-        System.arraycopy(seqSplitted, 1, seqArr, 0, seqArr.length);
-
-        StringBuilder seq = new StringBuilder();
-        for (String s : seqArr) {
-            seq.append(s);
-        }
-
-        String[] DNAseqArr = new String[seqArr.length];
-        String[] tRNAseqArr = new String[seqArr.length];
-        String[] AAseqArr = new String[seqArr.length / 3];
-        StringBuilder DNA_codon = new StringBuilder();
-        StringBuilder tRNA_codon = new StringBuilder();
-        StringBuilder aminoacid = new StringBuilder();
-
-        for (int i = 0; i < seq.length(); i += 3) {
-            codon = seq.substring(i, i + 3);
-            preSolveForIRNA(i / 3, codon, DNAseqArr, seqArr, tRNAseqArr, AAseqArr);
-        }
-
-
-        for (String i :
-                DNAseqArr) {
-            DNA_codon.append(i);
-        }
-
-        for (int i = 1; i < tRNAseqArr.length + 1; i++) {
-            tRNA_codon.append(tRNAseqArr[i - 1]);
-            if (i % 3 == 0) {
-                tRNA_codon.append("; ");
-            }
-        }
-
-        for (String i :
-                AAseqArr) {
-            aminoacid.append(i).append("-");
-        }
-
-
-        return new String[] {DNA_codon.toString(), tRNA_codon.toString(), aminoacid.toString()};
-    }
-
-    public void preSolveForIRNA(int iter, String codon, String[] DNAseqArr, String[] iRNAseqArr, String[] tRNAseqArr, String[] AAseqArr) {
-        String[] codonToArrPre = codon.split(""); // T, T, T
-        String[] codonToArr = new String[codon.length()];
-        System.arraycopy(codonToArrPre, 1, codonToArr, 0, codonToArr.length);
-        handleDNA(iter, codon, DNAseqArr, codonToArr);
-
-        handleTRNA(iter, codon, tRNAseqArr, codonToArr);
-
-        handleAminoAcid(iRNAseqArr, AAseqArr);
-    }
-
-    public String[] solveForTRNA() {
-        String codon;
-
-        String sequenceString = sequence.getText().toString();
-        String[] seqSplitted = sequenceString.split(""); // [, А, Т, Г]
-
-        String[] seqArr = new String[sequenceString.length()];
-        System.arraycopy(seqSplitted, 1, seqArr, 0, seqArr.length);// [А, Т, Г]
-
-        StringBuilder seq = new StringBuilder();
-        for (String s : seqArr) {
-            seq.append(s);
-        }
-
-        String[] DNAseqArr = new String[seqArr.length];
-        String[] iRNAseqArr = new String[seqArr.length];
-        String[] AAseqArr = new String[seqArr.length / 3];
-        StringBuilder DNA_codon = new StringBuilder();
-        StringBuilder iRNA_codon = new StringBuilder();
-        StringBuilder aminoacid = new StringBuilder();
-
-        for (int i = 0; i < seq.length(); i += 3) {
-            codon = seq.substring(i, i + 3);
-            preSolveForTRNA(i / 3, codon, DNAseqArr, iRNAseqArr, AAseqArr);
-        }
-
-        for (String i :
-                DNAseqArr) {
-            DNA_codon.append(i);
-
-        }
-
-        for (String i : iRNAseqArr) {
-            iRNA_codon.append(i);
-        }
-
-        for (String i :
-                AAseqArr) {
-            aminoacid.append(i).append("-");
-        }
-
-        return new String[] {DNA_codon.toString(), iRNA_codon.toString(), aminoacid.toString()};
-    }
-
-    public void preSolveForTRNA(int iter, String codon, String[] DNAseqArr, String[] iRNAseqArr, String[] AAseqArr) {
-        String[] codonToArrPre = codon.split("");
-        String[] codonToArr = new String[codon.length()];
-        System.arraycopy(codonToArrPre, 1, codonToArr, 0, codonToArr.length);
-        int j = iter * 3;
-        for (int i = 0; i < codon.length(); i++) {
-            if (codonToArr[i].equals(URACIL)) {
-                DNAseqArr[j + i] = THYMINE;
-            } else if (codonToArr[i].equals(ADENINE)) {
-                DNAseqArr[j + i] = ADENINE;
-            } else if (codonToArr[i].equals(CYTOSINE)) {
-                DNAseqArr[j + i] = CYTOSINE;
-            } else if (codonToArr[i].equals(GUANINE)) {
-                DNAseqArr[j + i] = GUANINE;
-            }
-        }
-
-        for (int i = 0; i < codon.length(); i++) {
-
-            if (codonToArr[i].equals(ADENINE)) {
-                iRNAseqArr[j + i] = URACIL;
-            } else if (codonToArr[i].equals(URACIL)) {
-                iRNAseqArr[j + i] = ADENINE;
-            } else if (codonToArr[i].equals(GUANINE)) {
-                iRNAseqArr[j + i] = CYTOSINE;
-            } else if (codonToArr[i].equals(CYTOSINE)) {
-                iRNAseqArr[j + i] = GUANINE;
-            }
-        }
-
-        handleAminoAcid(iRNAseqArr, AAseqArr);
-    }
-
-    void handleDNA(int iter, String codon, String[] DNAseqArr, String[] codonToArr) {
-        int j = iter * 3;
-        for (int i = 0; i < codon.length(); i++) {
-
-            if (codonToArr[i].equals(ADENINE)) {
-                DNAseqArr[j + i] = THYMINE;
-            } else if (codonToArr[i].equals(URACIL)) {
-                DNAseqArr[j + i] = ADENINE;
-            } else if (codonToArr[i].equals(GUANINE)) {
-                DNAseqArr[j + i] = CYTOSINE;
-            } else if (codonToArr[i].equals(CYTOSINE)) {
-                DNAseqArr[j + i] = GUANINE;
-            }
-        }
-    }
-
-    void handleIRNA(int iter, String codon, String[] iRNAseqArr, String[] codonToArr) {
-        int j = iter * 3;
-        for (int i = 0; i < codon.length(); i++) {
-
-            if (codonToArr[i].equals(ADENINE)) {
-                iRNAseqArr[j + i] = URACIL;
-            } else if (codonToArr[i].equals(THYMINE)) {
-                iRNAseqArr[j + i] = ADENINE;
-            } else if (codonToArr[i].equals(GUANINE)) {
-                iRNAseqArr[j + i] = CYTOSINE;
-            } else if (codonToArr[i].equals(CYTOSINE)) {
-                iRNAseqArr[j + i] = GUANINE;
-            }
-
-        }
-    }
-
-    void handleTRNA(int iter, String codon, String[] tRNAseqArr, String[] codonToArr) {
-        int j = iter * 3;
-        for (int i = 0; i < codon.length(); i++) {
-
-            if (codonToArr[i].equals(ADENINE)) {
-                tRNAseqArr[j + i] = URACIL;
-            } else if (codonToArr[i].equals(URACIL)) {
-                tRNAseqArr[j + i] = ADENINE;
-            } else if (codonToArr[i].equals(GUANINE)) {
-                tRNAseqArr[j + i] = CYTOSINE;
-            } else if (codonToArr[i].equals(CYTOSINE)) {
-                tRNAseqArr[j + i] = GUANINE;
-            }
-        }
-    }
-
-    void handleAminoAcid(String[] iRNAseqArr, String[] AAseqArr) {
-
-        int c = 0;
-        String aminoacid;
-        for (int i = 0; i < iRNAseqArr.length - 2; i += 3, c++) {
-
-            aminoacid = iRNAseqArr[i] + iRNAseqArr[i + 1] + iRNAseqArr[i + 2];
-
-            if ((URACIL + URACIL + URACIL).equals(aminoacid) || (URACIL + URACIL + CYTOSINE).equals(aminoacid)) {
-                AAseqArr[c] = phenylalanine;
-            } else if ((URACIL + URACIL + ADENINE).equals(aminoacid) || (URACIL + URACIL + GUANINE).equals(aminoacid) || (CYTOSINE + URACIL + URACIL).equals(aminoacid) || (CYTOSINE + URACIL + CYTOSINE).equals(aminoacid) || (CYTOSINE + URACIL + ADENINE).equals(aminoacid) || (CYTOSINE + URACIL + GUANINE).equals(aminoacid)) {
-                AAseqArr[c] = leucine;
-            } else if ((URACIL + CYTOSINE + URACIL).equals(aminoacid) || (URACIL + CYTOSINE + CYTOSINE).equals(aminoacid) || (URACIL + CYTOSINE + ADENINE).equals(aminoacid) || (URACIL + CYTOSINE + GUANINE).equals(aminoacid) || (ADENINE + GUANINE + URACIL).equals(aminoacid) || (ADENINE + GUANINE + CYTOSINE).equals(aminoacid)) {
-                AAseqArr[c] = serine;
-            } else if ((URACIL + ADENINE + URACIL).equals(aminoacid) || (URACIL + ADENINE + CYTOSINE).equals(aminoacid)) {
-                AAseqArr[c] = tyrosine;
-            } else if ((URACIL + GUANINE + URACIL).equals(aminoacid) || (URACIL + GUANINE + CYTOSINE).equals(aminoacid)) {
-                AAseqArr[c] = cysteine;
-            } else if ((URACIL + GUANINE + GUANINE).equals(aminoacid)) {
-                AAseqArr[c] = tryptophan;
-            } else if ((CYTOSINE + CYTOSINE + URACIL).equals(aminoacid) || (CYTOSINE + CYTOSINE + CYTOSINE).equals(aminoacid) || (CYTOSINE + CYTOSINE + ADENINE).equals(aminoacid) || (CYTOSINE + CYTOSINE + GUANINE).equals(aminoacid)) {
-                AAseqArr[c] = proline;
-            } else if ((CYTOSINE + ADENINE + URACIL).equals(aminoacid) || (CYTOSINE + ADENINE + CYTOSINE).equals(aminoacid)) {
-                AAseqArr[c] = histidine;
-            } else if ((CYTOSINE + GUANINE + URACIL).equals(aminoacid) || (CYTOSINE + GUANINE + CYTOSINE).equals(aminoacid) || (CYTOSINE + GUANINE + ADENINE).equals(aminoacid) || (CYTOSINE + GUANINE + GUANINE).equals(aminoacid) || (ADENINE + GUANINE + ADENINE).equals(aminoacid) || (ADENINE + GUANINE + GUANINE).equals(aminoacid)) {
-                AAseqArr[c] = arginine;
-            } else if ((ADENINE + URACIL + URACIL).equals(aminoacid) || (ADENINE + URACIL + CYTOSINE).equals(aminoacid) || (ADENINE + URACIL + ADENINE).equals(aminoacid)) {
-                AAseqArr[c] = isoleucine;
-            } else if ((ADENINE + CYTOSINE + URACIL).equals(aminoacid) || (ADENINE + CYTOSINE + CYTOSINE).equals(aminoacid) || (ADENINE + CYTOSINE + ADENINE).equals(aminoacid) || (ADENINE + CYTOSINE + GUANINE).equals(aminoacid)) {
-                AAseqArr[c] = threonine;
-            } else if ((ADENINE + ADENINE + URACIL).equals(aminoacid) || (ADENINE + ADENINE + CYTOSINE).equals(aminoacid)) {
-                AAseqArr[c] = asparagine;
-            } else if ((ADENINE + URACIL + GUANINE).equals(aminoacid)) {
-                AAseqArr[c] = methionine;
-            } else if ((ADENINE + ADENINE + ADENINE).equals(aminoacid) || (ADENINE + ADENINE + GUANINE).equals(aminoacid)) {
-                AAseqArr[c] = lysine;
-            } else if ((GUANINE + URACIL + URACIL).equals(aminoacid) || (GUANINE + URACIL + CYTOSINE).equals(aminoacid) || (GUANINE + URACIL + ADENINE).equals(aminoacid) || (GUANINE + URACIL + GUANINE).equals(aminoacid)) {
-                AAseqArr[c] = valine;
-            } else if ((GUANINE + CYTOSINE + URACIL).equals(aminoacid) || (GUANINE + CYTOSINE + CYTOSINE).equals(aminoacid) || (GUANINE + CYTOSINE + ADENINE).equals(aminoacid) || (GUANINE + CYTOSINE + GUANINE).equals(aminoacid)) {
-                AAseqArr[c] = alanine;
-            } else if ((GUANINE + ADENINE + URACIL).equals(aminoacid) || (GUANINE + ADENINE + CYTOSINE).equals(aminoacid)) {
-                AAseqArr[c] = aspartic_acid;
-            } else if ((GUANINE + ADENINE + ADENINE).equals(aminoacid) || (GUANINE + ADENINE + GUANINE).equals(aminoacid)) {
-                AAseqArr[c] = glutamine_acid;
-            } else if ((GUANINE + GUANINE + URACIL).equals(aminoacid) || (GUANINE + GUANINE + CYTOSINE).equals(aminoacid) || (GUANINE + GUANINE + ADENINE).equals(aminoacid) || (GUANINE + GUANINE + GUANINE).equals(aminoacid)) {
-                AAseqArr[c] = glycine;
-            } else if ((URACIL + ADENINE + ADENINE).equals(aminoacid) || (URACIL + ADENINE + GUANINE).equals(aminoacid) || (URACIL + GUANINE + ADENINE).equals(aminoacid)) {
-                AAseqArr[c] = stop;
-            } else if ((CYTOSINE + ADENINE + ADENINE).equals(aminoacid) || (CYTOSINE + ADENINE + GUANINE).equals(aminoacid)) {
-                AAseqArr[c] = glutamine;
-            }
-        }
 
     }
 
